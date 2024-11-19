@@ -93,7 +93,7 @@ export default {
   top: 0;
   width: 100%;
   z-index: 1000;
-  background-color: #333;
+  background-color: #d47676;
   color: white;
   padding: 10px;
   

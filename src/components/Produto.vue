@@ -9,7 +9,7 @@
       >
         <div
           class="produto-imagem"
-          :style="{ backgroundImage: `url(https://2ca4-189-112-39-185.ngrok-free.app/${produto.imagem})` }"
+          :style="{ backgroundImage: `url(http://localhost:5500/${produto.imagem})` }"
         ></div>
 
         <div>
@@ -105,7 +105,9 @@ mounted() {
     box-sizing: border-box;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     padding: 16px;
-    margin: 8px;
+    margin-top: 100px;
+    margin-left: 10px;
+    margin-bottom: 50px;
     height: 500px;
     display: flex;
     flex-direction: column;

@@ -31,7 +31,7 @@ export default createStore({
     // Carrega os produtos usando a API local na porta 5500
     carregarProdutos({ commit }) {
       axios
-        .get('https://2ca4-189-112-39-185.ngrok-free.app/produtos')  // Utilize http:// para uma API local
+        .get('http://localhost:5500/produtos')  // Utilize http:// para uma API local
         .then(response => {
           commit('carregarProdutos', response.data);
         })

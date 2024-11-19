@@ -1,4 +1,5 @@
 <template>
+
   <div class="cadastro-container">
     <!-- Cabeçalho -->
     <div class="header">
@@ -103,7 +104,7 @@ export default {
         }
 
         // Enviar os dados do produto para o servidor (json-server)
-        await axios.post('http://localhost:8000/produtos', formData, {
+        await axios.post('http://localhost:5500/produtos', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -147,15 +148,17 @@ export default {
 </script>
 
 <style>
+
 .cadastro-container {
   max-width: 50%;
-  margin: 0 auto;
-  padding: 20px;
+  margin-top: 70px;
+  margin-bottom: 20px; 
+  padding: 10px;
   background-color: #e0e0e0;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
-  color: #333;
+  color: #333;  
 }
 
 /* Cabeçalho */

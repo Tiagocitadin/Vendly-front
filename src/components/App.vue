@@ -1,10 +1,13 @@
 <template>
   <div id="app">
-    <NavBar />    
+    <NavBar />
 
-    <router-view />
+    <!-- Define uma estrutura flexível para conteúdo e footer -->
+    <div class="content">
+      <router-view />
+    </div>
 
-    <Footer></Footer>
+    <Footer />
   </div>
 </template>
 
@@ -12,24 +15,18 @@
 import NavBar from '../components/Navbar.vue';
 import Footer from '../components/Footer.vue';
 
-
-
 export default {
   components: {
     NavBar,
-    Footer,   
+    Footer,
   },
- 
   created() {
     this.$store.dispatch('carregarProdutos');
+    document.title = "Vendly";
   },
-
-created() {
-    this.$store.dispatch('carregarProdutos');
-    document.nome = "Vendly"; 
-  }
 };
 </script>
+
 
 <style lang="scss">
 html, body {
@@ -40,13 +37,19 @@ html, body {
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 50px;
+  display: flex;
+  flex-direction: column; /* Coloca os elementos em uma coluna */
+  min-height: 100vh; /* Altura mínima é 100% da tela */
+}
 
-  
+.content {
+  flex: 1; /* Faz o conteúdo ocupar o espaço restante */
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
 }
 </style>

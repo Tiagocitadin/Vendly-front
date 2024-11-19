@@ -1,12 +1,10 @@
 <template>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
- 
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
   <div class="cadastro-container">
     <div class="header">
       <h4>Vendly - Cadastro Cliente</h4>
+
+      <!-- Mensagem de Sucesso -->
+      <span v-if="successMessage" class="success-message">{{ successMessage }}</span>
     </div>
 
     <!-- Etapa 1: Dados Básicos -->
@@ -21,7 +19,14 @@
 
           <div class="form-group half-width">
             <label for="cpf">CPF <span>*</span></label>
-            <input type="text" id="cpf" v-model="cliente.cpf" placeholder="000.000.000-00" @input="cliente.cpf = formataCpf(cliente.cpf)" required />
+            <input
+              type="text"
+              id="cpf"
+              v-model="cliente.cpf"
+              placeholder="000.000.000-00"
+              @input="cliente.cpf = formataCpf(cliente.cpf)"
+              required
+            />
             <small v-if="errors.cpf" class="error">{{ errors.cpf }}</small>
           </div>
         </div>
@@ -29,7 +34,14 @@
         <div class="form-row">
           <div class="form-group half-width">
             <label for="telefone">Telefone <span>*</span></label>
-            <input type="text" id="telefone" v-model="cliente.telefone" placeholder="(XX)XXXXX-XXXX" @input="cliente.telefone = formataTelefone(cliente.telefone)" required />
+            <input
+              type="text"
+              id="telefone"
+              v-model="cliente.telefone"
+              placeholder="(XX)XXXXX-XXXX"
+              @input="cliente.telefone = formataTelefone(cliente.telefone)"
+              required
+            />
             <small v-if="errors.telefone" class="error">{{ errors.telefone }}</small>
           </div>
 
@@ -92,62 +104,59 @@
             <small v-if="errors.estado" class="error">{{ errors.estado }}</small>
           </div>
           <div class="form-group half-width">
-            <label for="numero">Número <span>*</span></label>
-            <input type="text" id="numero" v-model="cliente.endereco.numero" placeholder="Número" required />
+            <label for="numero">Número </label>
+            <input type="text" id="numero" v-model="cliente.endereco.numero" placeholder="Número" />
             <small v-if="errors.numero" class="error">{{ errors.numero }}</small>
           </div>
         </div>
 
         <div class="action-buttons">
           <button class="cancel-button" @click="voltarParaEtapaAnterior">Voltar</button>
-          <button class="submit-button" type="submit">Finalizar</button>
+          <button class="submit-button" type="submit">Cadastrar</button>
         </div>
       </form>
     </div>
   </div>
 </template>
 
+
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
       etapa: 1,
       cliente: {
-        id: '',
-        nome: '',
-        cpf: '',
-        email: '',
-        senha: '',
-        telefone: '',
+        nome: "",
+        cpf: "",
+        email: "",
+        telefone: "",
         endereco: {
-          rua: '',
-          numero: '',
-          bairro: '',
-          cidade: '',
-          estado: '',
-          cep: ''
-        }
+          cep: "",
+          rua: "",
+          bairro: "",
+          cidade: "",
+          estado: "",
+          numero: "",
+        },
       },
       errors: {},
+      successMessage: "", // Mensagem de sucesso
     };
   },
-
   methods: {
     async buscarEnderecoPorCep() {
       if (!this.cliente.endereco.cep || this.cliente.endereco.cep.length < 8) {
         this.errors.cep = "CEP inválido ou incompleto";
         return;
       }
-
       try {
         const response = await axios.get(`https://viacep.com.br/ws/${this.cliente.endereco.cep}/json/`);
         if (response.data.erro) {
           this.errors.cep = "CEP não encontrado";
           return;
         }
-
         this.cliente.endereco.rua = response.data.logradouro;
         this.cliente.endereco.bairro = response.data.bairro;
         this.cliente.endereco.cidade = response.data.localidade;
@@ -158,77 +167,81 @@ export default {
         this.errors.cep = "Erro ao buscar CEP";
       }
     },
-
+    formataCpf(cpf) {
+      return cpf
+        .replace(/\D/g, "") // Remove tudo que não for número
+        .replace(/(\d{3})(\d)/, "$1.$2") // Coloca o primeiro ponto
+        .replace(/(\d{3})(\d)/, "$1.$2") // Coloca o segundo ponto
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2") // Coloca o traço
+        .slice(0, 14); // Limita ao formato XXX.XXX.XXX-XX
+    },
+    formataTelefone(telefone) {
+      return telefone
+        .replace(/\D/g, "") // Remove tudo que não for número
+        .replace(/^(\d{2})(\d)/g, "($1) $2") // Adiciona parênteses
+        .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o traço
+        .slice(0, 15); // Limita ao formato (XX)XXXXX-XXXX
+    },
     irParaProximaEtapa() {
       if (!this.cliente.nome || !this.cliente.cpf || !this.cliente.email || !this.cliente.telefone) {
         this.errors = {
-          nome: !this.cliente.nome ? 'O nome é obrigatório' : '',
-          cpf: !this.cliente.cpf ? 'O CPF é obrigatório' : '',
-          email: !this.cliente.email ? 'O email é obrigatório' : '',
-          telefone: !this.cliente.telefone ? 'O telefone é obrigatório' : ''
+          nome: !this.cliente.nome ? "O nome é obrigatório" : "",
+          cpf: !this.cliente.cpf ? "O CPF é obrigatório" : "",
+          email: !this.cliente.email ? "O email é obrigatório" : "",
+          telefone: !this.cliente.telefone ? "O telefone é obrigatório" : "",
         };
         return;
       }
       this.errors = {};
       this.etapa = 2;
     },
-
-    formataCpf(cpf) {
-      return cpf.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2').slice(0, 14);
-    },
-
-    formataTelefone(telefone) {
-      return telefone.replace(/\D/g, '').replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2').slice(0, 15);
-    },
-
-    voltarParaEtapaAnterior() {
-      this.etapa = 1;
-    },
-
     async finalizarCadastro() {
-      if (!this.cliente.endereco.rua || !this.cliente.endereco.numero || !this.cliente.endereco.bairro || !this.cliente.endereco.cidade || !this.cliente.endereco.estado || !this.cliente.endereco.cep) {
+      if (!this.cliente.endereco.cep || !this.cliente.endereco.rua || !this.cliente.endereco.bairro || !this.cliente.endereco.cidade || !this.cliente.endereco.estado) {
         this.errors = {
-          rua: !this.cliente.endereco.rua ? 'A rua é obrigatória' : '',
-          numero: !this.cliente.endereco.numero ? 'O número é obrigatório' : '',
-          bairro: !this.cliente.endereco.bairro ? 'O bairro é obrigatório' : '',
-          cidade: !this.cliente.endereco.cidade ? 'A cidade é obrigatória' : '',
-          estado: !this.cliente.endereco.estado ? 'O estado é obrigatório' : '',
-          cep: !this.cliente.endereco.cep ? 'O CEP é obrigatório' : ''
+          cep: !this.cliente.endereco.cep ? "O CEP é obrigatório" : "",
+          rua: !this.cliente.endereco.rua ? "A rua é obrigatória" : "",
+          bairro: !this.cliente.endereco.bairro ? "O bairro é obrigatório" : "",
+          cidade: !this.cliente.endereco.cidade ? "A cidade é obrigatória" : "",
+          estado: !this.cliente.endereco.estado ? "O estado é obrigatório" : "",
         };
         return;
       }
       try {
-        await axios.post('http://localhost:5500/clientes', this.cliente);
-        alert('Cliente cadastrado com sucesso!');
+        await axios.post("http://localhost:5500/clientes", this.cliente);
+        this.successMessage = "Cliente cadastrado com sucesso!";
         this.clearForm();
+        setTimeout(() => {
+          this.successMessage = ""; // Remove a mensagem após 3 segundos
+        }, 3000);
       } catch (error) {
-        console.error('Erro ao cadastrar cliente:', error);
+        console.error("Erro ao cadastrar cliente:", error);
       }
     },
-
+    voltarParaEtapaAnterior() {
+      this.etapa = 1;
+    },
     clearForm() {
       this.cliente = {
-        id: '',
-        nome: '',
-        cpf: '',
-        email: '',
-        senha: '',
-        telefone: '',
+        nome: "",
+        cpf: "",
+        email: "",
+        telefone: "",
         endereco: {
-          rua: '',
-          numero: '',
-          bairro: '',
-          cidade: '',
-          estado: '',
-          cep: ''
-        }
+          cep: "",
+          rua: "",
+          bairro: "",
+          cidade: "",
+          estado: "",
+          numero: "",
+        },
       };
       this.errors = {};
       this.etapa = 1;
-    }
-  }
+    },
+  },
 };
 </script>
+
 
 
 <style scoped>
@@ -236,7 +249,7 @@ export default {
 .cadastro-container {
   max-width: 400px; /* Define uma largura máxima menor */
   width: 90%; /* Ocupa 90% da largura da tela, mas respeita o max-width */
-  margin: 0 auto; /* Centraliza o formulário */
+  margin: 80px auto; /* Centraliza o formulário */
   padding: 20px;
   border-radius: 10px;
   background-color: #f4f7f9;
@@ -339,6 +352,19 @@ button {
 
 button:hover {
   opacity: 0.8;
+}
+
+.success-message {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
 }
 
 </style>

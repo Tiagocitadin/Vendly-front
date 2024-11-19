@@ -20,10 +20,24 @@ export default {
 <style scoped lang="scss">
 
 html, body {
-  height: 100%; /* Isso garante que o corpo e o HTML ocupem a altura total da página */
   margin: 0;
   padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+
+.content {
+  flex: 1; /* Expande para ocupar o espaço disponível */
+}
+
+.footer {
+  background-color: #333; /* Cor de fundo do footer */
+  color: white; /* Cor do texto */
+  text-align: center;
+  padding: 10px 0;
+}
+
 
 #app {
   display: flex;

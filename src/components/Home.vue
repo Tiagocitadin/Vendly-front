@@ -3,20 +3,22 @@
     <!-- Cabeçalho -->
     <div class="homePage">
       <h1 class="animatedTitle">Vendly - A Plataforma Completa para Vender Produtos de PC</h1>
-      <h4 class="animatedSubtitle">Seu marketplace especializado em tecnologia, pronto para impulsionar suas vendas online</h4>    
+      <h4 class="animatedSubtitle">Seu marketplace especializado em tecnologia, pronto para impulsionar suas vendas online</h4>
     </div>  
-    <div class="carousel">
-      <div class="carousel-container" :style="{ transform: 'translateX(-' + (currentIndex * 100) + '%)' }">
 
-        <!-- Iterar sobre a lista de produtos mais vendidos com v-for -->
+    <!-- Carrossel -->
+    <div class="carousel" v-if="maisVendidos.length > 0">
+      <div class="carousel-container" :style="{ transform: 'translateX(-' + (currentIndex * 100) + '%)' }">
         <div class="carousel-item" v-for="(produto, index) in maisVendidos" :key="index">
           <img :src="produto.imagem" :alt="produto.nome" />
           <h3>{{ produto.nome }}</h3>
         </div>
       </div>
-    </div> 
+    </div>
+    <p v-else class="no-products">Nenhum produto encontrado para exibir.</p>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -25,48 +27,58 @@ export default {
   name: 'Home',
   data() {
     return {
-      produtos: [], // Array para armazenar os produtos carregados
       currentIndex: 0, // Índice atual do carrossel
-      intervalId: null // Armazena o ID do intervalo para o carrossel automático
+      produtos: [], // Lista completa de produtos
+      isRunning: false, // Controla se o carrossel está em execução
     };
   },
   computed: {
-    // Filtra os produtos que têm a propriedade maisVendido como true
     maisVendidos() {
-      return this.produtos.filter(produto => produto.maisVendido);
-    }
+      // Filtra os produtos com base na booleana "maisVendido"
+      return this.produtos.filter((produto) => produto.maisVendido);
+    },
   },
   methods: {
-    produtosHome() {
-      axios
-        .get('http://localhost:3000/produtos') // Certifique-se de que o json-server está rodando nesta porta
-        .then(response => {
-          this.produtos = response.data; // Armazena os produtos na propriedade 'produtos'
-        })
-        .catch(error => {
-          console.error('Erro ao carregar produtos: ', error);
-        });
+    async produtosHome() {
+      try {
+        const response = await axios.get('http://localhost:5500/produtos'); // Certifique-se de que o servidor JSON está rodando
+        this.produtos = response.data;
+        // Só inicia o carrossel se houver produtos
+        if (this.maisVendidos.length > 0) {
+          this.startCarousel();
+        }
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+      }
     },
     startCarousel() {
-      // Inicia o carrossel automático
-      this.intervalId = setInterval(() => {
-        this.currentIndex = (this.currentIndex + 1) % this.maisVendidos.length;
-      }, 3000); // Troca a cada 3 segundos
+      // Método para iniciar o carrossel contínuo
+      if (!this.isRunning) {
+        this.isRunning = true;
+        const nextSlide = () => {
+          if (this.isRunning && this.maisVendidos.length > 0) {
+            this.currentIndex = (this.currentIndex + 1) % this.maisVendidos.length;
+            this.$nextTick(() => {
+              requestAnimationFrame(nextSlide); // Continua o ciclo
+            });
+          }
+        };
+        nextSlide(); // Inicia o ciclo
+      }
     },
     stopCarousel() {
-      // Para o carrossel automático
-      clearInterval(this.intervalId);
-    }
+      this.isRunning = false; // Pausa o carrossel
+    },
   },
   mounted() {
     this.produtosHome(); // Carrega os produtos ao montar o componente
-    this.startCarousel(); // Inicia o carrossel automático
   },
   beforeDestroy() {
     this.stopCarousel(); // Para o carrossel quando o componente for destruído
-  }
+  },
 };
 </script>
+
 
 <style>
 /* Estilo Geral */
@@ -96,6 +108,7 @@ body {
   padding: 30px 20px;
   text-align: center;
   width: 100%;
+  margin-top: 100px;
 }
 
 .animatedTitle {
