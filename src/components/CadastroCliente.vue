@@ -1,13 +1,17 @@
 <template>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ 
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <div class="cadastro-container">
     <div class="header">
       <h4>Vendly - Cadastro Cliente</h4>
     </div>
 
-    <div class="form-container">
-      <form @submit.prevent="cadastrarOuEditarCliente">
+    <!-- Etapa 1: Dados Básicos -->
+    <div class="form-container" v-if="etapa === 1">
+      <form @submit.prevent="irParaProximaEtapa">
         <div class="form-row">
           <div class="form-group half-width">
             <label for="nome">Nome <span>*</span></label>
@@ -36,30 +40,67 @@
           </div>
         </div>
 
+        <div class="action-buttons">
+          <button class="submit-button" type="submit">Próximo</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Etapa 2: Endereço -->
+    <div class="form-container" v-else-if="etapa === 2">
+      <form @submit.prevent="finalizarCadastro">
         <div class="form-row">
-          <div class="form-group half-width senha-container">
-            <label for="senha">Senha <span>*</span></label>
-            <div class="senha-wrapper">
-              <input
-                :type="mostrarSenha ? 'text' : 'password'"
-                id="senha"
-                v-model="cliente.senha"
-                placeholder="Senha"
-                required
-              />
-              <button type="button" class="toggle-senha" @click="toggleSenha">
-                <i :class="mostrarSenha ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-              </button>
-            </div>
-            <small v-if="errors.senha" class="error">{{ errors.senha }}</small>
+          <div class="form-group half-width">
+            <label for="cep">CEP <span>*</span></label>
+            <input
+              type="text"
+              id="cep"
+              v-model="cliente.endereco.cep"
+              placeholder="00000-000"
+              maxlength="9"
+              @blur="buscarEnderecoPorCep"
+              required
+            />
+            <small v-if="errors.cep" class="error">{{ errors.cep }}</small>
+          </div>
+
+          <div class="form-group half-width">
+            <label for="rua">Rua <span>*</span></label>
+            <input type="text" id="rua" v-model="cliente.endereco.rua" placeholder="Rua" required />
+            <small v-if="errors.rua" class="error">{{ errors.rua }}</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="bairro">Bairro <span>*</span></label>
+            <input type="text" id="bairro" v-model="cliente.endereco.bairro" placeholder="Bairro" required />
+            <small v-if="errors.bairro" class="error">{{ errors.bairro }}</small>
+          </div>
+
+          <div class="form-group half-width">
+            <label for="cidade">Cidade <span>*</span></label>
+            <input type="text" id="cidade" v-model="cliente.endereco.cidade" placeholder="Cidade" required />
+            <small v-if="errors.cidade" class="error">{{ errors.cidade }}</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="estado">Estado <span>*</span></label>
+            <input type="text" id="estado" v-model="cliente.endereco.estado" placeholder="Estado" required />
+            <small v-if="errors.estado" class="error">{{ errors.estado }}</small>
+          </div>
+          <div class="form-group half-width">
+            <label for="numero">Número <span>*</span></label>
+            <input type="text" id="numero" v-model="cliente.endereco.numero" placeholder="Número" required />
+            <small v-if="errors.numero" class="error">{{ errors.numero }}</small>
           </div>
         </div>
 
         <div class="action-buttons">
-          <button class="submit-button" @click="cadastrarCliente">Cadastrar</button>
-          <button class="edit-button" @click="editarCliente">Editar</button>
-          <button class="delete-button" @click="excluirCliente">Excluir</button>
-          <button class="cancel-button" @click="clearForm">Cancelar</button>
+          <button class="cancel-button" @click="voltarParaEtapaAnterior">Voltar</button>
+          <button class="submit-button" type="submit">Finalizar</button>
         </div>
       </form>
     </div>
@@ -72,23 +113,64 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      etapa: 1,
       cliente: {
         id: '',
         nome: '',
         cpf: '',
         email: '',
         senha: '',
-        telefone: ''
+        telefone: '',
+        endereco: {
+          rua: '',
+          numero: '',
+          bairro: '',
+          cidade: '',
+          estado: '',
+          cep: ''
+        }
       },
-      mostrarSenha: false,
       errors: {},
-      isEditing: false
     };
   },
 
   methods: {
-    toggleSenha() {
-      this.mostrarSenha = !this.mostrarSenha;
+    async buscarEnderecoPorCep() {
+      if (!this.cliente.endereco.cep || this.cliente.endereco.cep.length < 8) {
+        this.errors.cep = "CEP inválido ou incompleto";
+        return;
+      }
+
+      try {
+        const response = await axios.get(`https://viacep.com.br/ws/${this.cliente.endereco.cep}/json/`);
+        if (response.data.erro) {
+          this.errors.cep = "CEP não encontrado";
+          return;
+        }
+
+        this.cliente.endereco.rua = response.data.logradouro;
+        this.cliente.endereco.bairro = response.data.bairro;
+        this.cliente.endereco.cidade = response.data.localidade;
+        this.cliente.endereco.estado = response.data.uf;
+        this.errors.cep = ""; // Limpa o erro
+      } catch (error) {
+        console.error("Erro ao buscar CEP:", error);
+        this.errors.cep = "Erro ao buscar CEP";
+      }
+    },
+
+    irParaProximaEtapa() {
+      if (!this.cliente.nome || !this.cliente.cpf || !this.cliente.email || !this.cliente.telefone) {
+        this.errors = {
+          nome: !this.cliente.nome ? 'O nome é obrigatório' : '',
+          cpf: !this.cliente.cpf ? 'O CPF é obrigatório' : '',
+          email: !this.cliente.email ? 'O email é obrigatório' : '',
+          telefone: !this.cliente.telefone ? 'O telefone é obrigatório' : ''
+        };
+        return;
+      }
+      this.errors = {};
+      this.etapa = 2;
     },
 
     formataCpf(cpf) {
@@ -99,11 +181,19 @@ export default {
       return telefone.replace(/\D/g, '').replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2').slice(0, 15);
     },
 
-    async cadastrarCliente() {
-      if (!this.cliente.nome || !this.cliente.senha) {
+    voltarParaEtapaAnterior() {
+      this.etapa = 1;
+    },
+
+    async finalizarCadastro() {
+      if (!this.cliente.endereco.rua || !this.cliente.endereco.numero || !this.cliente.endereco.bairro || !this.cliente.endereco.cidade || !this.cliente.endereco.estado || !this.cliente.endereco.cep) {
         this.errors = {
-          nome: !this.cliente.nome ? 'O nome é obrigatório' : '',
-          senha: !this.cliente.senha ? 'A senha é obrigatória' : ''
+          rua: !this.cliente.endereco.rua ? 'A rua é obrigatória' : '',
+          numero: !this.cliente.endereco.numero ? 'O número é obrigatório' : '',
+          bairro: !this.cliente.endereco.bairro ? 'O bairro é obrigatório' : '',
+          cidade: !this.cliente.endereco.cidade ? 'A cidade é obrigatória' : '',
+          estado: !this.cliente.endereco.estado ? 'O estado é obrigatório' : '',
+          cep: !this.cliente.endereco.cep ? 'O CEP é obrigatório' : ''
         };
         return;
       }
@@ -116,31 +206,6 @@ export default {
       }
     },
 
-    async editarCliente() {
-      if (!this.cliente.id) {
-        alert('Nenhum cliente selecionado para edição.');
-        return;
-      }
-      try {
-        await axios.put(`http://localhost:5500/clientes/${this.cliente.id}`, this.cliente);
-        alert('Cliente alterado com sucesso!');
-        this.clearForm();
-      } catch (error) {
-        console.error('Erro ao editar cliente:', error);
-      }
-    },
-
-    async excluirCliente() {
-      if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
-      try {
-        await axios.delete(`http://localhost:5500/clientes/${this.cliente.id}`);
-        alert('Cliente excluído com sucesso!');
-        this.clearForm();
-      } catch (error) {
-        console.error('Erro ao excluir cliente:', error);
-      }
-    },
-
     clearForm() {
       this.cliente = {
         id: '',
@@ -148,14 +213,23 @@ export default {
         cpf: '',
         email: '',
         senha: '',
-        telefone: ''
+        telefone: '',
+        endereco: {
+          rua: '',
+          numero: '',
+          bairro: '',
+          cidade: '',
+          estado: '',
+          cep: ''
+        }
       };
       this.errors = {};
-      this.isEditing = false;
+      this.etapa = 1;
     }
   }
 };
 </script>
+
 
 <style scoped>
 
