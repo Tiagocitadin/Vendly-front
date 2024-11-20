@@ -139,6 +139,16 @@
             <input type="text" id="numero" v-model="cliente.endereco.numero" placeholder="Número" />
             <small v-if="errors.numero" class="error">{{ errors.numero }}</small>
           </div>
+          <div class="form-group half-width">
+            <label for="complemento">Complemento:</label>
+              <textarea
+                id="complemento"
+                v-model="complemento"
+                placeholder="Digite a descrição aqui"
+                rows="5"
+                cols="30"
+              ></textarea>
+          </div>
         </div>
 
         <div class="action-buttons">
@@ -170,6 +180,7 @@ export default {
           cidade: "",
           estado: "",
           numero: "",
+          complemento: ""
           
         },
       },
@@ -278,6 +289,7 @@ export default {
           cidade: "",
           estado: "",
           numero: "",
+          complemento: ""
         },
       };
       this.errors = {};
