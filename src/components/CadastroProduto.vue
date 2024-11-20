@@ -153,12 +153,14 @@ export default {
   max-width: 50%;
   margin-top: 70px;
   margin-bottom: 20px; 
+  margin-left: 25%;
   padding: 10px;
   background-color: #e0e0e0;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
   color: #333;  
+
 }
 
 /* Cabeçalho */

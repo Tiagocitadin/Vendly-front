@@ -1,84 +1,77 @@
 <template>
-    <div class="login-page">
-      <!-- Cabeçalho -->
-      <div class="login">
-        <h4>Vendly - Login</h4>
-      </div>
-  
-      <!-- Formulário de Login -->
-      <div class="login-container">
-        <h2>Entre na sua conta</h2>
-
-        <form @submit.prevent="handleLogin">
-
-          <div class="input-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" v-model="email" required>
-          </div>
-
-          <div class="input-group">
-            <label for="password">Senha:</label>
-            <input type="password" id="password" v-model="password" required>
-          </div>
-
-          <button type="submit">Entrar</button>
-        </form>
-
-        <p class="register-link">
-          Não tem uma conta? <router-link to="/cadastrocliente">Cadastre-se aqui</router-link>
-        </p>
-
-
-      </div>
+  <div class="login-page">
+    <!-- Cabeçalho -->
+    <div class="login">
+      <h4>Vendly - Login</h4>
     </div>
-  </template>
-  
-  <script>
-  import { mapActions } from 'vuex';
-  
-  export default {
-    name: "Login",
-    data() {
-      return {
-        email: "",
-        password: ""
-      };
-    },
-    methods: {
-    ...mapActions(['redirectToCadastro']),
 
-    validateEmail(email) {
-      // Expressão regular para validar formato de email
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailPattern.test(email);
-    },
+    <!-- Formulário de Login -->
+    <div class="login-container">
+      <h2>Entre na sua conta</h2>
 
-    validatePassword(password) {
-      // Verifica se a senha tem pelo menos 6 caracteres
-      return password.length >= 6;
-    },
+      <form @submit.prevent="handleLogin">
+        <div class="input-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" v-model="email" required />
+        </div>
 
-    handleLogin() {
-      // Validação do email e senha
-      if (!this.validateEmail(this.email)) {
-        alert("Por favor, insira um email válido.");
-        return;
+        <div class="input-group">
+          <label for="password">Senha:</label>
+          <input type="password" id="password" v-model="password" required />
+        </div>
+
+        <button type="submit">Entrar</button>
+      </form>
+
+      <p class="register-link">
+        Não tem uma conta? <router-link to="/cadastrocliente">Cadastre-se aqui</router-link>
+      </p>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  name: "Login",
+  data() {
+    return {
+      email: "",
+      password: "",
+    };
+  },
+  methods: {
+    async handleLogin() {
+      try {
+        // Busca os usuários no db.json
+        const response = await axios.get("http://localhost:8000/clientes");
+        const usuarios = response.data;
+
+        // Verifica se o email e senha correspondem a algum registro
+        const usuario = usuarios.find(
+          (user) => user.email === this.email && user.senha === this.password
+        );
+
+        if (usuario) {
+          // Armazena o ID do usuário logado no localStorage
+          localStorage.setItem("userId", usuario.id);
+          alert("Login realizado com sucesso!");
+          this.$router.push("/perfil"); // Redireciona para a página de perfil ou outra página autenticada
+        } else {
+          alert("Email ou senha inválidos.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar os usuários:", error);
+        alert("Erro ao realizar o login. Tente novamente.");
       }
-
-      if (!this.validatePassword(this.password)) {
-        alert("A senha deve ter pelo menos 6 caracteres.");
-        return;
-      }
-
-      // Se passar na validação, redireciona para a página de cadastro
-        this.$router.push('/cadastrocliente');     
-    }
-  }
+    },
+  },
 };
-  </script>
-  
-  <style scoped>
- /* Página de login */
+</script>
+
+<style scoped>
+/* Página de login */
 .login-page {
   display: flex;
   flex-direction: column;
@@ -86,12 +79,12 @@
   align-items: center;
   height: 100vh;
   background-color: #f0f2f5;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   position: relative;
 }
 
 /* Estilização do cabeçalho */
-.login{
+.login {
   text-align: center;
   margin-bottom: 20px;
 }
@@ -100,8 +93,8 @@
   font-size: 28px;
   color: #333;
   font-weight: bold;
-  margin: 0; /* Remove a margem extra */
-  top: 10%; /* Ajuste conforme necessário */
+  margin: 0;
+  top: 10%;
   text-align: center;
 }
 
@@ -185,6 +178,4 @@ button[type="submit"]:hover {
 .register-link a:hover {
   text-decoration: underline;
 }
-
-  </style>
-  
+</style>

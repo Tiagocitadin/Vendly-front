@@ -15,6 +15,7 @@
         <div>
           <h4>{{ produto.nome }}</h4>
           <p class="descricao">{{ produto.descricao }}</p>
+        
         </div>
 
         <div>

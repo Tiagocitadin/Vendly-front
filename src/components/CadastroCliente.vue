@@ -9,7 +9,7 @@
       <h4>Vendly - Cadastro Cliente</h4>
 
       <!-- Mensagem de Sucesso -->
-      <span v-if="successMessage" class="success-message">{{ successMessage }}</span>
+      
     </div>
 
     <!-- Etapa 1: Dados Básicos -->
@@ -49,8 +49,6 @@
           <!-- Mensagem de erro -->
           <small v-if="errors.senha" class="error">{{ errors.senha }}</small>
         </div>
-
-
           <div class="form-group half-width">
             <label for="cpf">CPF <span>*</span></label>
             <input
@@ -78,9 +76,7 @@
               required
             />
             <small v-if="errors.telefone" class="error">{{ errors.telefone }}</small>
-          </div>
-
-          
+          </div>          
         </div>
 
         <div class="action-buttons">
@@ -143,11 +139,11 @@
             <label for="complemento">Complemento:</label>
               <textarea
                 id="complemento"
-                v-model="complemento"
+                v-model="cliente.endereco.complemento"
                 placeholder="Digite a descrição aqui"
                 rows="5"
                 cols="30"
-              ></textarea>
+              ></textarea>             
           </div>
         </div>
 
@@ -238,11 +234,12 @@ export default {
     },
   
     irParaProximaEtapa() {
-      if (!this.cliente.nome || !this.cliente.cpf || !this.cliente.email || !this.cliente.telefone) {
+      if (!this.cliente.nome || !this.cliente.email || !this.cliente.senha || !this.cliente.cpf || !this.cliente.telefone) {
         this.errors = {
-          nome: !this.cliente.nome ? "O nome é obrigatório" : "",
-          cpf: !this.cliente.cpf ? "O CPF é obrigatório" : "",
+          nome: !this.cliente.nome ? "O nome é obrigatório" : "",          
           email: !this.cliente.email ? "O email é obrigatório" : "",
+          senha: !this.cliente.senha ? "A Senha é obrigatória" : "",
+          cpf: !this.cliente.cpf ? "O CPF é obrigatório" : "",
           telefone: !this.cliente.telefone ? "O telefone é obrigatório" : "",
         };
         return;
@@ -252,27 +249,48 @@ export default {
     },
   
     async finalizarCadastro() {
-      if (!this.cliente.endereco.cep || !this.cliente.endereco.rua || !this.cliente.endereco.bairro || !this.cliente.endereco.cidade || !this.cliente.endereco.estado) {
-        this.errors = {
-          cep: !this.cliente.endereco.cep ? "O CEP é obrigatório" : "",
-          rua: !this.cliente.endereco.rua ? "A rua é obrigatória" : "",
-          bairro: !this.cliente.endereco.bairro ? "O bairro é obrigatório" : "",
-          cidade: !this.cliente.endereco.cidade ? "A cidade é obrigatória" : "",
-          estado: !this.cliente.endereco.estado ? "O estado é obrigatório" : "",
-        };
-        return;
-      }
-      try {
-        await axios.post("http://localhost:8000/clientes", this.cliente);
-        this.successMessage = "Cliente cadastrado com sucesso!";
-        this.clearForm();
-        setTimeout(() => {
-          this.successMessage = ""; // Remove a mensagem após 3 segundos
-        }, 3000);
-      } catch (error) {
-        console.error("Erro ao cadastrar cliente:", error);
-      }
-    },
+  if (
+    !this.cliente.endereco.cep ||
+    !this.cliente.endereco.rua ||
+    !this.cliente.endereco.bairro ||
+    !this.cliente.endereco.cidade ||
+    !this.cliente.endereco.estado
+  ) {
+    this.errors = {
+      cep: !this.cliente.endereco.cep ? "O CEP é obrigatório" : "",
+      rua: !this.cliente.endereco.rua ? "A rua é obrigatória" : "",
+      bairro: !this.cliente.endereco.bairro ? "O bairro é obrigatório" : "",
+      cidade: !this.cliente.endereco.cidade ? "A cidade é obrigatória" : "",
+      estado: !this.cliente.endereco.estado ? "O estado é obrigatório" : "",
+    };
+    return;
+  }
+
+  try {
+    // Cria uma cópia do objeto cliente e remove o ID
+    const clienteSemId = { ...this.cliente };
+    delete clienteSemId.id; // Remove a propriedade id
+
+    // Envia os dados para o servidor
+    const response = await axios.post(
+      "http://localhost:8000/clientes",
+      clienteSemId
+    );
+
+    this.successMessage = "Cliente cadastrado com sucesso!";
+    this.clearForm();
+
+    // Remove a mensagem após 3 segundos
+    setTimeout(() => {
+      this.successMessage = "";
+    }, 3000);
+
+    console.log("Cliente criado com ID:", response.data.id); // Mostra o ID gerado
+  } catch (error) {
+    console.error("Erro ao cadastrar cliente:", error);
+  }
+},
+   
     voltarParaEtapaAnterior() {
       this.etapa = 1;
     },
