@@ -59,6 +59,7 @@
               v-model="cliente.cpf"
               placeholder="000.000.000-00"
               @input="cliente.cpf = formataCpf(cliente.cpf)"
+              maxlength="14"
               required
             />
             <small v-if="errors.cpf" class="error">{{ errors.cpf }}</small>
@@ -251,7 +252,7 @@ export default {
         return;
       }
       try {
-        await axios.post("http://localhost:5500/clientes", this.cliente);
+        await axios.post("http://localhost:8000/clientes", this.cliente);
         this.successMessage = "Cliente cadastrado com sucesso!";
         this.clearForm();
         setTimeout(() => {

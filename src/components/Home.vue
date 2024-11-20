@@ -41,7 +41,7 @@ export default {
   methods: {
     async produtosHome() {
       try {
-        const response = await axios.get('http://localhost:5500/produtos'); // Certifique-se de que o servidor JSON está rodando
+        const response = await axios.get('http://localhost:8000/produtos'); // Certifique-se de que o servidor JSON está rodando
         this.produtos = response.data;
         // Só inicia o carrossel se houver produtos
         if (this.maisVendidos.length > 0) {

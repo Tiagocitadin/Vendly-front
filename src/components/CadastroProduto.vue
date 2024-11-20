@@ -104,7 +104,7 @@ export default {
         }
 
         // Enviar os dados do produto para o servidor (json-server)
-        await axios.post('http://localhost:5500/produtos', formData, {
+        await axios.post('http://localhost:8000/produtos', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

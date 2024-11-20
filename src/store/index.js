@@ -28,10 +28,10 @@ export default createStore({
   },
 
   actions: {
-    // Carrega os produtos usando a API local na porta 5500
+    // Carrega os produtos usando a API local na porta 8000
     carregarProdutos({ commit }) {
       axios
-        .get('http://localhost:5500/produtos')  // Utilize http:// para uma API local
+        .get('http://localhost:8000/produtos')  // Utilize http:// para uma API local
         .then(response => {
           commit('carregarProdutos', response.data);
         })
