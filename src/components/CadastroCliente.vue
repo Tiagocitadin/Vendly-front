@@ -1,4 +1,9 @@
 <template>
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+/>
+
   <div class="cadastro-container">
     <div class="header">
       <h4>Vendly - Cadastro Cliente</h4>
@@ -16,6 +21,35 @@
             <input type="text" id="nome" v-model="cliente.nome" placeholder="Nome" required />
             <small v-if="errors.nome" class="error">{{ errors.nome }}</small>
           </div>
+
+          <div class="form-group half-width">
+            <label for="email">Email <span>*</span></label>
+            <input type="text" id="email" v-model="cliente.email" placeholder="Email" required />
+            <small v-if="errors.email" class="error">{{ errors.email }}</small>
+          </div>
+
+          <div class="form-group half-width">
+          <label for="senha">Senha <span>*</span></label>
+          <div class="input-wrapper">
+            <!-- Campo de senha -->
+            <input
+              :type="showPassword ? 'text' : 'password'"
+              id="senha"
+              v-model="cliente.senha"
+              placeholder="Senha"
+              required
+            />
+            <!-- Ícone para alternar a visualização -->
+            <i
+              class="toggle-password"
+              :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+              @click="togglePassword"
+            ></i>
+          </div>
+          <!-- Mensagem de erro -->
+          <small v-if="errors.senha" class="error">{{ errors.senha }}</small>
+        </div>
+
 
           <div class="form-group half-width">
             <label for="cpf">CPF <span>*</span></label>
@@ -45,11 +79,7 @@
             <small v-if="errors.telefone" class="error">{{ errors.telefone }}</small>
           </div>
 
-          <div class="form-group half-width">
-            <label for="email">Email <span>*</span></label>
-            <input type="text" id="email" v-model="cliente.email" placeholder="Email" required />
-            <small v-if="errors.email" class="error">{{ errors.email }}</small>
-          </div>
+          
         </div>
 
         <div class="action-buttons">
@@ -119,7 +149,6 @@
   </div>
 </template>
 
-
 <script>
 import axios from "axios";
 
@@ -129,8 +158,9 @@ export default {
       etapa: 1,
       cliente: {
         nome: "",
-        cpf: "",
         email: "",
+        senha: "",
+        cpf: "",          
         telefone: "",
         endereco: {
           cep: "",
@@ -139,13 +169,19 @@ export default {
           cidade: "",
           estado: "",
           numero: "",
+          
         },
       },
       errors: {},
-      successMessage: "", // Mensagem de sucesso
+      successMessage: "", 
+      showPassword: false,
     };
   },
   methods: {
+    togglePassword() {
+      // Alterna entre exibir ou ocultar a senha
+      this.showPassword = !this.showPassword;
+    },
     async buscarEnderecoPorCep() {
       if (!this.cliente.endereco.cep || this.cliente.endereco.cep.length < 8) {
         this.errors.cep = "CEP inválido ou incompleto";
@@ -167,6 +203,12 @@ export default {
         this.errors.cep = "Erro ao buscar CEP";
       }
     },
+    formataCep(cep) {
+      return cep
+        .replace(/\D/g, "") // Remove tudo que não for número
+        .replace(/(\d{5})(\d)/, "$1-$2") // Coloca o traço após os 5 primeiros dígitos
+        .slice(0, 9); // Limita ao formato XXXXX-XXX
+    },
     formataCpf(cpf) {
       return cpf
         .replace(/\D/g, "") // Remove tudo que não for número
@@ -182,6 +224,7 @@ export default {
         .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o traço
         .slice(0, 15); // Limita ao formato (XX)XXXXX-XXXX
     },
+  
     irParaProximaEtapa() {
       if (!this.cliente.nome || !this.cliente.cpf || !this.cliente.email || !this.cliente.telefone) {
         this.errors = {
@@ -195,6 +238,7 @@ export default {
       this.errors = {};
       this.etapa = 2;
     },
+  
     async finalizarCadastro() {
       if (!this.cliente.endereco.cep || !this.cliente.endereco.rua || !this.cliente.endereco.bairro || !this.cliente.endereco.cidade || !this.cliente.endereco.estado) {
         this.errors = {
@@ -367,4 +411,32 @@ button:hover {
   text-align: center;
 }
 
+/* Wrapper do campo e ícone */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Campo de input */
+.input-wrapper input {
+  flex: 1; /* Ocupa todo o espaço disponível */
+  padding-right: 40px; /* Espaço para o ícone */
+}
+
+/* Ícone de alternar visualização */
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  font-size: 18px;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+  color: #5c6bc0;
+}
 </style>
+
+
