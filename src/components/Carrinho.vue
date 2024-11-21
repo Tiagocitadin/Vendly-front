@@ -71,7 +71,8 @@ export default {
 
   .items {
     max-width: 800px;
-    margin: auto;
+    margin: 80px 0 0 25%;
+   
 
     .item {
       display: flex;

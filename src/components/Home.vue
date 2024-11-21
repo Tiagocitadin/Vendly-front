@@ -4,27 +4,26 @@
     <div class="homePage">
       <h1 class="animatedTitle">Vendly - A Plataforma Completa para Vender Produtos de PC</h1>
       <h4 class="animatedSubtitle">Seu marketplace especializado em tecnologia, pronto para impulsionar suas vendas online</h4>
-    </div>  
+    </div>
 
     <!-- Carrossel -->
-    <div class="carousel" v-if="maisVendidos.length > 0">
+    <div class="carousel" v-if="maisVendidos.length > 0">    
       <div class="carousel-container" :style="{ transform: 'translateX(-' + (currentIndex * 100) + '%)' }">
         <div class="carousel-item" v-for="(produto, index) in maisVendidos" :key="index">
-          <img :src="produto.imagem" :alt="produto.nome" />
-          <h3>{{ produto.nome }}</h3>
+          <img :src="produto.imagem" :alt="produto.nome" class="carousel-image" />
+          <h3 class="produto-nome">{{ produto.nome }}</h3>
         </div>
       </div>
-    </div>
+        </div>
     <p v-else class="no-products">Nenhum produto encontrado para exibir.</p>
   </div>
 </template>
 
-
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  name: 'Home',
+  name: "Home",
   data() {
     return {
       currentIndex: 0, // Índice atual do carrossel
@@ -34,81 +33,71 @@ export default {
   },
   computed: {
     maisVendidos() {
-      // Filtra os produtos com base na booleana "maisVendido"
       return this.produtos.filter((produto) => produto.maisVendido);
     },
   },
   methods: {
     async produtosHome() {
       try {
-        const response = await axios.get('http://localhost:8000/produtos'); // Certifique-se de que o servidor JSON está rodando
+        const response = await axios.get("http://localhost:8000/produtos");
         this.produtos = response.data;
-        // Só inicia o carrossel se houver produtos
         if (this.maisVendidos.length > 0) {
           this.startCarousel();
         }
       } catch (error) {
-        console.error('Erro ao carregar produtos:', error);
+        console.error("Erro ao carregar produtos:", error);
       }
     },
     startCarousel() {
-      // Método para iniciar o carrossel contínuo
       if (!this.isRunning) {
         this.isRunning = true;
         const nextSlide = () => {
           if (this.isRunning && this.maisVendidos.length > 0) {
             this.currentIndex = (this.currentIndex + 1) % this.maisVendidos.length;
-            this.$nextTick(() => {
-              requestAnimationFrame(nextSlide); // Continua o ciclo
-            });
+            setTimeout(nextSlide, 3000); // Avança automaticamente a cada 3 segundos
           }
         };
-        nextSlide(); // Inicia o ciclo
+        nextSlide();
       }
     },
     stopCarousel() {
-      this.isRunning = false; // Pausa o carrossel
+      this.isRunning = false;
     },
-  },
+   },
   mounted() {
-    this.produtosHome(); // Carrega os produtos ao montar o componente
+    this.produtosHome();
   },
   beforeDestroy() {
-    this.stopCarousel(); // Para o carrossel quando o componente for destruído
+    this.stopCarousel();
   },
 };
 </script>
 
-
 <style>
 /* Estilo Geral */
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f4f4f4;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
   color: #333;
 }
 
-/* Estilo do Container Principal */
+/* Estilo Principal */
 .home {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Estilo do Cabeçalho */
+/* Cabeçalho */
 .homePage {
   background-color: #333;
   color: #fff;
   padding: 30px 20px;
   text-align: center;
   width: 100%;
-  margin-top: 100px;
+  margin-top: 120px; 
 }
 
 .animatedTitle {
@@ -138,20 +127,45 @@ body {
   }
 }
 
-/* Estilo do Carrossel */
+/* Carrossel */
 .carousel {
+  position: relative;
   overflow: hidden;
   width: 100%;
   max-width: 1200px;
   margin: 30px auto;
-  background-color: #ffffff;
+  background-color: transparent; /* Corrigido: Remove qualquer fundo */
   border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-container {
   display: flex;
-  transition: transform 0.5s
-
+  transition: transform 0.5s ease-in-out;
+  background: none; /* Corrigido: Remove fundo adicional */
 }
+
+.carousel-item {
+  min-width: 100%;
+  text-align: center;
+  background: none; /* Corrigido: Remove fundo dos itens */
+  border: none; /* Remove bordas dos itens */
+}
+
+.carousel-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Título do Produto */
+.produto-nome {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+
+
 </style>

@@ -79,11 +79,12 @@ export default {
   background-color: #d47676;
   color: white;
   padding: 10px;
+  height: 80px;
 
   a {
     color: white;
     text-decoration: none;
-    font-size: 18px; /* Aumenta um pouco o tamanho do texto */
+    font-size: 30px; /* Aumenta um pouco o tamanho do texto */
     margin: 0 20px; /* Adiciona um espaçamento mínimo entre os links */
 
     &.router-link-exact-active {
