@@ -12,15 +12,18 @@
     </router-link>
     <!-- Exibir nome do usuário logado e botão de logout -->
     <div class="user-info">
+      <!-- Verifica se o usuário está logado -->
       <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>
-      <router-link v-else to="/login">Olá, faça seu Login</router-link>
+      <!-- Caso não esteja logado, exibe o link para login -->
+      <router-link v-else to="/login">Login</router-link>
+      <!-- Exibe o botão de logout se o usuário estiver logado -->
       <button v-if="usuarioLogado" @click="logout">Sair</button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios"; // Importa Axios para fazer requisições HTTP
+import axios from "axios";
 
 export default {
   data() {
@@ -32,14 +35,14 @@ export default {
   computed: {
     // Obtém os produtos que estão no carrinho de compras a partir do Vuex Store
     produtosCarrinho() {
-      return this.$store.state.produtosCarrinho;
+      return this.$store.state.produtosCarrinho || [];
     },
   },
   created() {
-    // Buscar os dados do usuário do localStorage
+    // Buscar os dados do usuário no localStorage ao montar o componente
     const usuario = localStorage.getItem("usuarioLogado");
     if (usuario) {
-      this.usuarioLogado = JSON.parse(usuario);
+      this.usuarioLogado = JSON.parse(usuario); // Transforma o JSON em objeto e armazena
     }
 
     // Buscar os produtos ao carregar o componente
@@ -49,9 +52,9 @@ export default {
     // Método para buscar os produtos da API local
     fetchProdutos() {
       axios
-        .get("https://localhost:8000/produtos") // Requisição GET para a API local
+        .get("http://localhost:8000/produtos") // Requisição GET para a API local
         .then((response) => {
-          this.produtos = response.data.produtos; // Armazena os produtos recebidos da API
+          this.produtos = response.data; // Armazena os produtos recebidos da API
         })
         .catch((error) => {
           console.error("Erro ao buscar produtos:", error); // Exibe erro no console, se houver
@@ -61,6 +64,7 @@ export default {
       // Remover o usuário do localStorage
       localStorage.removeItem("usuarioLogado");
       this.usuarioLogado = null; // Atualizar o estado do componente
+      alert("Você saiu com sucesso!");
       this.$router.push("/login"); // Redirecionar para a página de login
     },
   },

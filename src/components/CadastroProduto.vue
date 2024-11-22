@@ -50,117 +50,98 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
       produto: {
-        nome: '',
-        descricao: '',
-        quantidade: '',
-        preco: '',
-        imagem: null  // Agora a imagem será tratada como um arquivo (null no início)
+        nome: "",
+        descricao: "",
+        quantidade: "",
+        preco: "",
+        imagem: null, // Para armazenar o arquivo de imagem
+        imagemPreview: null, // Para pré-visualização da imagem
       },
-      errors: {},
+      errors: {}, // Para mensagens de erro
     };
   },
-  
+
   methods: {
-    // Método para cadastrar o produto e enviar para o db.json via API
     async inserir() {
-      this.errors = {}; // Limpa os erros antes de verificar o formulário
+      this.errors = {}; // Limpa os erros antes da validação
 
-      // Simulação de validação
-      if (!this.produto.nome) {
-        this.errors.nome = 'O título do produto é obrigatório';
-      }
-      if (!this.produto.descricao) {
-        this.errors.descricao = 'A descrição do produto é obrigatória';
-      }
-      if (!this.produto.quantidade) {
-        this.errors.quantidade = 'A quantidade em estoque é obrigatória';
-      }
-      if (!this.produto.preco) {
-        this.errors.preco = 'O valor do produto é obrigatório';
-      }
+      // Validação
+      if (!this.produto.nome) this.errors.nome = "O título do produto é obrigatório.";
+      if (!this.produto.descricao) this.errors.descricao = "A descrição do produto é obrigatória.";       
+      if (!this.produto.quantidade) this.errors.quantidade = "A quantidade em estoque é obrigatória.";       
+      if (!this.produto.preco) this.errors.preco = "O valor do produto é obrigatório.";
 
-      // Se houver erros, não envia o formulário
-      if (Object.keys(this.errors).length > 0) {
-        return;
-      }
-
+      if (Object.keys(this.errors).length > 0) return; // Interrompe se houver erros
       try {
-        // Criar um FormData para enviar os dados e a imagem
+        // Criar os dados para envio
         const formData = new FormData();
-        formData.append('nome', this.produto.nome);
-        formData.append('descricao', this.produto.descricao);
-        formData.append('quantidade', this.produto.quantidade);
-        formData.append('preco', this.produto.preco);
+        formData.append("nome", this.produto.nome);
+        formData.append("descricao", this.produto.descricao);
+        formData.append("quantidade", this.produto.quantidade);
+        formData.append("preco", this.produto.preco);
 
-        // Se houver imagem, também adiciona ao FormData
+        // Adicionar imagem, se houver
         if (this.produto.imagem) {
-          formData.append('imagem', this.produto.imagem);
+          formData.append("imagem", this.produto.imagem);
         }
-
-        // Enviar os dados do produto para o servidor (json-server)
-        await axios.post('http://localhost:8000/produtos', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-
-        alert(this.produto.nome + ' cadastrado com sucesso!');
+        await axios.post("http://localhost:8000/produtos", formData);
+        alert(`${this.produto.nome} cadastrado com sucesso!`);
         this.clearForm();
       } catch (error) {
-        console.error('Erro ao cadastrar o produto: ', error);
-        alert('Erro ao cadastrar o produto');
+        console.error("Erro ao cadastrar o produto:", error);
+        alert("Erro ao cadastrar o produto. Verifique o console para mais detalhes.");
       }
     },
 
-    // Método para limpar o formulário
+    // Limpa os campos do formulário
     clearForm() {
       this.produto = {
-        nome: '',
-        descricao: '',
-        quantidade: '',
-        preco: '',
-        imagem: null
+        nome: "",
+        descricao: "",
+        quantidade: "",
+        preco: "",
+        imagem: null,
+        imagemPreview: null,
       };
     },
 
-    // Função para lidar com a imagem selecionada
+    // Manipula o upload de imagem
     onImageSelected(event) {
       const file = event.target.files[0];
       if (file) {
-        this.produto.imagem = file;  // Armazenamos o arquivo de imagem
+        this.produto.imagem = file;
 
-        // Gerar uma URL de pré-visualização para o arquivo de imagem selecionado
+        // Cria uma pré-visualização da imagem
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.produto.imagemPreview = e.target.result; // Armazena a URL da imagem no campo 'imagemPreview'
+          this.produto.imagemPreview = e.target.result;
         };
         reader.readAsDataURL(file);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
 
 .cadastro-container {
-  max-width: 50%;
-  margin-top: 70px;
-  margin-bottom: 20px; 
-  margin-left: 25%;
+  max-width: 30%;  
   padding: 10px;
   background-color: #e0e0e0;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
   color: #333;  
-
+  margin-left: 550px;
+  margin-top: 150px;
+  margin-bottom: 50px;
 }
 
 /* Cabeçalho */

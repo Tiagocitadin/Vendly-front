@@ -43,30 +43,32 @@ export default {
   },
   methods: {
     async handleLogin() {
-      try {
-        // Busca os usuários no db.json
-        const response = await axios.get("http://localhost:8000/clientes");
-        const usuarios = response.data;
+  try {
+    // Busca os usuários no db.json
+    const response = await axios.get("http://localhost:8000/clientes");
+    const usuarios = response.data;
 
-        // Verifica se o email e senha correspondem a algum registro
-        const usuario = usuarios.find(
-          (user) => user.email === this.email && user.senha === this.password
-        );
+    // Verifica se o email e senha correspondem a algum registro
+    const usuario = usuarios.find(
+      (user) => user.email === this.email && user.senha === this.password
+    );
 
-        if (usuario) {
-          // Armazena o ID do usuário logado no localStorage
-          localStorage.setItem("userId", usuario.id);
-          alert("Login realizado com sucesso!");
-          this.$router.push("/perfil"); // Redireciona para a página de perfil ou outra página autenticada
-        } else {
-          alert("Email ou senha inválidos.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar os usuários:", error);
-        alert("Erro ao realizar o login. Tente novamente.");
-      }
-    },
-  },
+    if (usuario) {
+      // Armazena o usuário logado no localStorage
+      localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+
+      alert("Login realizado com sucesso!");
+      this.$router.push("/perfil"); // Redireciona para a página de perfil
+    } else {
+      alert("Email ou senha inválidos.");
+    }
+  } catch (error) {
+    console.error("Erro ao buscar os usuários:", error);
+    alert("Erro ao realizar o login. Tente novamente.");
+  }
+}
+    }
+  
 };
 </script>
 

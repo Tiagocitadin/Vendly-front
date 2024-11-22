@@ -1,7 +1,7 @@
 {
   "produtos": [
     {
-      "id": "2",
+      "id": "1",
       "nome": "Placa Mãe H610M",
       "descricao": "A Placa Mãe H610M garante desempenho e confiabilidade, suportando processadores Intel de 12ª geração e memória DDR4, ideal para PCs compactos e eficientes.",
       "estoque": 8,
@@ -10,16 +10,16 @@
       "maisVendido": true
     },
     {
-      "id": "3",
+      "id": "2",
       "nome": "Placa Mãe B550M",
-      "descricao": " A B550M é uma placa mãe compacta e potente, com suporte a processadores AMD Ryzen, PCIe 4.0 e memória DDR4, perfeita para desempenho extremo.",
+      "descricao": "A B550M é uma placa mãe compacta e potente, com suporte a processadores AMD Ryzen, PCIe 4.0 e memória DDR4, perfeita para desempenho extremo.",
       "preco": 750,
       "imagem": "/assets/PlacamaeB550M.jpeg",
       "estoque": 20,
       "maisVendido": true
     },
     {
-      "id": "4",
+      "id": "3",
       "nome": "Placa de Vídeo AMD Radeon RX",
       "descricao": "A AMD Radeon RX entrega gráficos impressionantes com Ray Tracing e alta performance, ideal para jogos e criação de conteúdo.",
       "preco": 2800,
@@ -28,7 +28,7 @@
       "maisVendido": true
     },
     {
-      "id": "5",
+      "id": "4",
       "nome": "Processador AMD Ryzen",
       "descricao": "O AMD Ryzen combina potência e eficiência para jogos, multitarefas e criação de conteúdo com desempenho multinúcleo e suporte a overclock.",
       "preco": 5500,
@@ -37,7 +37,7 @@
       "maisVendido": true
     },
     {
-      "id": "6",
+      "id": "5",
       "nome": "Processador AMD Ryzen 1ª Geração",
       "descricao": "O AMD Ryzen 1ª Geração entrega desempenho multitarefa eficiente, ideal para uso diário e jogos casuais, com arquitetura moderna e custo-benefício.",
       "preco": 250,
@@ -46,27 +46,27 @@
       "maisVendido": true
     },
     {
-      "id": "7",
+      "id": "6",
       "nome": "Processador AMD Ryzen 2ª Geração",
-      "descricao": " O AMD Ryzen 2ª Geração oferece potência aprimorada e multitarefas eficientes, ideal para jogos e criação de conteúdo, com suporte a overclock e maior desempenho.",
+      "descricao": "O AMD Ryzen 2ª Geração oferece potência aprimorada e multitarefas eficientes, ideal para jogos e criação de conteúdo, com suporte a overclock e maior desempenho.",
       "preco": 750,
       "imagem": "/assets/ProcessadorAMDRyzen2.jpeg",
       "estoque": 20,
       "maisVendido": true
     },
     {
-      "id": "8",
+      "id": "7",
       "nome": "Processador Intel Core",
-      "descricao": "O Processador Intel Core oferece desempenho avançado para jogos e produtividade, com maior velocidade e eficiência energética para uma experiência fluida",
+      "descricao": "O Processador Intel Core oferece desempenho avançado para jogos e produtividade, com maior velocidade e eficiência energética para uma experiência fluida.",
       "preco": 2800,
       "imagem": "/assets/ProcessadorIntel.jpeg",
       "estoque": 5,
       "maisVendido": true
     },
     {
-      "id": "9",
+      "id": "8",
       "nome": "Ventoinha de Alto Desempenho",
-      "descricao": " A Ventoinha de Alto Desempenho oferece resfriamento eficiente e silencioso, ideal para manter seu PC estável em uso intenso.",
+      "descricao": "A Ventoinha de Alto Desempenho oferece resfriamento eficiente e silencioso, ideal para manter seu PC estável em uso intenso.",
       "preco": 5500,
       "imagem": "/assets/Ventoinha.jpeg",
       "estoque": 30,
@@ -75,7 +75,7 @@
   ],
   "clientes": [
     {
-      "id": "4656",
+      "id": "1",
       "nome": "Tiago",
       "email": "tyagogc@gmail.com",
       "senha": "123456",
@@ -88,48 +88,14 @@
         "cidade": "Tubarão",
         "estado": "SC",
         "numero": "1601",
-        "complemento": "casa"
+        "complemento": "Casa"
       }
     },
     {
-      "id": "ffec",
-      "nome": "Teste",
-      "cpf": "111.111.111-11",
-      "email": "teste@gmail.com",
-      "telefone": "(44) 44444-4444",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "snumero",
-        "complemento": "testando"
-      },
-      "senha": "123456"
-    },
-    {
-      "id": "c50c",
-      "nome": "teste",
-      "cpf": "555.555.555-55",
-      "email": "teste@gmail.com",
-      "telefone": "(44) 44444-4444",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "",
-        "complemento": "testando"
-      },
-      "senha": "456123"
-    },
-    {
-      "id": "e1fd",
-      "nome": "tt",
-      "email": "ttt",
-      "senha": "ttttttttttttt",
+      "id": "2",
+      "nome": "dvs",
+      "email": "vsdddd",
+      "senha": "444444444444444",
       "cpf": "444.444.444-44",
       "telefone": "(44) 44444-4444",
       "endereco": {
@@ -143,10 +109,11 @@
       }
     },
     {
-      "id": "338f",
-      "nome": "fffffffffff",
+      "id": "3",
+      "nome": "drgtryh",
+      "email": "regf",
+      "senha": "444444444444444",
       "cpf": "444.444.444-44",
-      "email": "ffffffffffffffffff",
       "telefone": "(44) 44444-4444",
       "endereco": {
         "cep": "88702295",
@@ -156,15 +123,15 @@
         "estado": "SC",
         "numero": "",
         "complemento": ""
-      },
-      "senha": "456321789"
+      }
     },
     {
-      "id": "ae4a",
-      "nome": "vefvd",
-      "cpf": "444.444.444-44",
-      "email": "tttttttt",
-      "telefone": "(44) 44444-4444",
+      "id": "be68",
+      "nome": "ffff",
+      "email": "ffffff",
+      "senha": "456+789",
+      "cpf": "888.888.888-88",
+      "telefone": "(88) 88888-8888",
       "endereco": {
         "cep": "88702295",
         "rua": "Rua Galdino José de Bessa",
@@ -173,8 +140,24 @@
         "estado": "SC",
         "numero": "",
         "complemento": ""
-      },
-      "senha": "789456123"
+      }
+    },
+    {
+      "id": "7739",
+      "nome": "tiago",
+      "email": "tyagogc@gmail.com",
+      "senha": "123456",
+      "cpf": "055.555.555-55",
+      "telefone": "(55) 55555-5555",
+      "endereco": {
+        "cep": "88702295",
+        "rua": "Rua Galdino José de Bessa",
+        "bairro": "Oficinas",
+        "cidade": "Tubarão",
+        "estado": "SC",
+        "numero": "",
+        "complemento": ""
+      }
     }
   ]
 }

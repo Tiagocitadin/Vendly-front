@@ -106,13 +106,14 @@ mounted() {
     box-sizing: border-box;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     padding: 16px;
-    margin-top: 100px;
+    margin-top: 150px;
     margin-left: 10px;
     margin-bottom: 50px;
-    height: 500px;
+    height: 700px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    
 
     @media only screen and (max-width: 769px) {
       flex: 0 0 40%;

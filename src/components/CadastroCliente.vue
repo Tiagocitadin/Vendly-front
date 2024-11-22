@@ -8,7 +8,13 @@
     <div class="header">
       <h4>Vendly - Cadastro Cliente</h4>
 
-      <!-- Mensagem de Sucesso -->
+      <span
+        v-if="mensagemSucesso"
+        class="mensagem-sucesso"
+        style="color: green; font-weight: bold;"
+      >
+        Cadastrado com sucesso
+      </span>
       
     </div>
 
@@ -145,7 +151,7 @@
                 cols="30"
               ></textarea>             
           </div>
-        </div>
+        </div>       
 
         <div class="action-buttons">
           <button class="cancel-button" @click="voltarParaEtapaAnterior">Voltar</button>
@@ -163,6 +169,7 @@ export default {
   data() {
     return {
       etapa: 1,
+      mensagemSucesso: false,
       cliente: {
         nome: "",
         email: "",
@@ -273,9 +280,7 @@ export default {
 
     // Envia os dados para o servidor
     const response = await axios.post(
-      "http://localhost:8000/clientes",
-      clienteSemId
-    );
+      "http://localhost:8000/clientes",clienteSemId);
 
     this.successMessage = "Cliente cadastrado com sucesso!";
     this.clearForm();
@@ -317,10 +322,7 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
-
 .cadastro-container {
   max-width: 400px; /* Define uma largura máxima menor */
   width: 90%; /* Ocupa 90% da largura da tela, mas respeita o max-width */
@@ -329,6 +331,7 @@ export default {
   border-radius: 10px;
   background-color: #f4f7f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 150px;
 }
 
 .senha-container {
