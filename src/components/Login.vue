@@ -27,6 +27,13 @@
         Não tem uma conta? <router-link to="/cadastrocliente">Cadastre-se aqui</router-link>
       </p>
     </div>
+
+    <!-- Botão de Cadastro de Produto -->
+    <div class="product-add" v-if="isLoggedIn">
+      <button @click="irParaCadastroProduto" class="btn-add-product">
+        Cadastrar Produto
+      </button>
+    </div>
   </div>
 </template>
 
@@ -39,36 +46,48 @@ export default {
     return {
       email: "",
       password: "",
+      isLoggedIn: false, // Estado para verificar se o usuário está logado
     };
+  },
+  created() {
+    // Verifica se o usuário está logado ao carregar o componente
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    this.isLoggedIn = !!usuarioLogado; // Define como true se houver usuário logado
   },
   methods: {
     async handleLogin() {
-  try {
-    // Busca os usuários no db.json
-    const response = await axios.get("http://localhost:8000/clientes");
-    const usuarios = response.data;
+      try {
+        // Busca os usuários no db.json
+        const response = await axios.get("http://localhost:8000/clientes");
+        const usuarios = response.data;
 
-    // Verifica se o email e senha correspondem a algum registro
-    const usuario = usuarios.find(
-      (user) => user.email === this.email && user.senha === this.password
-    );
+        // Verifica se o email e senha correspondem a algum registro
+        const usuario = usuarios.find(
+          (user) => user.email === this.email && user.senha === this.password
+        );
 
-    if (usuario) {
-      // Armazena o usuário logado no localStorage
-      localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+        if (usuario) {
+          // Armazena o usuário logado no localStorage
+          localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
 
-      alert("Login realizado com sucesso!");
-      this.$router.push("/perfil"); // Redireciona para a página de perfil
-    } else {
-      alert("Email ou senha inválidos.");
-    }
-  } catch (error) {
-    console.error("Erro ao buscar os usuários:", error);
-    alert("Erro ao realizar o login. Tente novamente.");
-  }
-}
-    }
-  
+          // Atualiza o estado de login
+          this.isLoggedIn = true;
+
+          alert("Login realizado com sucesso!");
+          this.$router.push("/"); // Redireciona para a página inicial
+        } else {
+          alert("Email ou senha inválidos.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar os usuários:", error);
+        alert("Erro ao realizar o login. Tente novamente.");
+      }
+    },
+    irParaCadastroProduto() {
+      // Redireciona para a página de cadastro de produto
+      this.$router.push("/cadastroproduto");
+    },
+  },
 };
 </script>
 
@@ -179,5 +198,25 @@ button[type="submit"]:hover {
 
 .register-link a:hover {
   text-decoration: underline;
+}
+
+/* Botão de cadastro de produto */
+.product-add {
+  margin-top: 20px;
+}
+
+.btn-add-product {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-add-product:hover {
+  background-color: #218838;
 }
 </style>

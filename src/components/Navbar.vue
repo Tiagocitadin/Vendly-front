@@ -1,23 +1,47 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link>
-    <router-link to="/produto">Produtos</router-link>
-    <router-link to="/carrinho" class="carrinho-link">
-      <div class="carrinho-icon">
-        <img src="/src/img/carrinho-de-compras (1).png" alt="Carrinho de compra" />
-        <span class="cart-count" v-if="produtosCarrinho.length > 0">
-          ({{ produtosCarrinho.length }})
-        </span>
+  <div>
+    <!-- Barra superior: Login e usuário -->
+    <div class="login-bar">
+      <div class="user-info">
+        <!-- Verifica se o usuário está logado -->
+        <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>
+        <!-- Caso não esteja logado, exibe o link para login -->
+        <router-link v-else to="/login">Login</router-link>
+        <!-- Substitui o botão de perfil por uma imagem -->
+        <img
+          v-if="usuarioLogado"
+          src="/public/assets/perfil.png"
+          alt="Perfil"
+          class="btn-profile"
+          @click="irParaPerfil"
+          title="Perfil"
+        />
+        <!-- Botão de Cadastro de Produto (ícone) -->
+        <img
+          v-if="usuarioLogado"
+          src="/public/assets/cadastro.png"
+          alt="Cadastrar Produto"
+          class="btn-add-product"
+          @click="irParaCadastroProduto"
+          title="Cadastrar Produto"
+        />
+        <!-- Exibe o botão de logout se o usuário estiver logado -->
+        <button v-if="usuarioLogado" @click="logout">Sair</button>
       </div>
-    </router-link>
-    <!-- Exibir nome do usuário logado e botão de logout -->
-    <div class="user-info">
-      <!-- Verifica se o usuário está logado -->
-      <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>
-      <!-- Caso não esteja logado, exibe o link para login -->
-      <router-link v-else to="/login">Login</router-link>
-      <!-- Exibe o botão de logout se o usuário estiver logado -->
-      <button v-if="usuarioLogado" @click="logout">Sair</button>
+    </div>
+
+    <!-- Barra inferior: Navegação -->
+    <div id="nav">
+      <router-link to="/">Home</router-link>
+      <router-link to="/produto">Produtos</router-link>
+      <router-link to="/carrinho" class="carrinho-link">
+        <div class="carrinho-icon">
+          <img src="/src/img/carrinho-de-compras (1).png" alt="Carrinho de compra" />
+          <span class="cart-count" v-if="produtosCarrinho.length > 0">
+            ({{ produtosCarrinho.length }})
+          </span>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -67,32 +91,102 @@ export default {
       alert("Você saiu com sucesso!");
       this.$router.push("/login"); // Redirecionar para a página de login
     },
+    irParaPerfil() {
+      // Redireciona para a página de perfil
+      this.$router.push("/perfil");
+    },
+    irParaCadastroProduto() {
+      // Redireciona para a página de cadastro de produto
+      this.$router.push("/cadastroproduto");
+    },
   },
 };
 </script>
 
 <style lang="scss">
-#nav {
+/* Barra superior: Login */
+.login-bar {
   display: flex;
-  justify-content: space-around; /* Divide os links de forma igual no espaço disponível */
-  align-items: center; /* Alinha os itens verticalmente ao centro */
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
+  justify-content: flex-end;
+  align-items: center;
   background-color: #d47676;
   color: white;
+  padding: 10px 20px;
+  height: 50px;
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    span {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    /* Estilo para imagem do botão de perfil */
+    .btn-profile {
+      width: 30px; /* Largura do ícone */
+      height: 30px; /* Altura do ícone */
+      cursor: pointer;
+      border-radius: 50%; /* Deixa o ícone redondo */
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .btn-profile:hover {
+      transform: scale(1.2);
+      opacity: 0.8;
+    }
+
+    /* Estilo para imagem do botão de adicionar produto */
+    .btn-add-product {
+      width: 30px; /* Largura do ícone */
+      height: 30px; /* Altura do ícone */
+      cursor: pointer;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .btn-add-product:hover {
+      transform: scale(1.2);
+      opacity: 0.8;
+    }
+
+    button {
+      padding: 5px 10px;
+      background-color: white;
+      color: #d47676;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ffcdd2;
+    }
+  }
+}
+
+/* Barra inferior: Navegação */
+#nav {
+  display: flex;
+  justify-content: baseline;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  z-index: 1000;
+  background-color: #000000; /* Cor de fundo da barra inferior */
+  color: #ffffff; /* Cor do texto */
   padding: 10px;
-  height: 80px;
+  height: 60px;
 
   a {
-    color: white;
+    color: #a19b9b; /* Cor padrão dos links */
     text-decoration: none;
-    font-size: 30px; /* Aumenta um pouco o tamanho do texto */
-    margin: 0 20px; /* Adiciona um espaçamento mínimo entre os links */
+    font-size: 20px;
+    margin: 0 20px;
 
     &.router-link-exact-active {
-      color: #007bff; /* Cor para o link ativo */
+      color: #1efd00; /* Cor para o link ativo */
     }
   }
 
@@ -109,53 +203,29 @@ export default {
 
   .carrinho-icon {
     position: relative;
-    display: inline-block;
+    display: inline-block;   
   }
 
   .carrinho-icon img {
-    width: 40px; /* Ajuste o tamanho da imagem do carrinho conforme necessário */
+    width: 40px; /* Tamanho do ícone do carrinho */
     height: auto;
   }
 
   .cart-count {
     position: absolute;
-    top: -10px; /* Ajuste a posição vertical do contador */
-    right: -30px; /* Ajuste a posição horizontal do contador */
-    background-color: #ff0000;
+    top: -10px; /* Ajuste da posição vertical */
+    right: -30px; /* Ajuste da posição horizontal */
+    background-color: #ff0000; /* Fundo do contador */
     color: #fff;
     font-size: 14px;
     padding: 2px 6px;
-    border-radius: 50%;
+    border-radius: 50%; /* Deixa o contador redondo */
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
     min-width: 24px;
     height: 24px;
-  }
-
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-    span {
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    button {
-      padding: 5px 10px;
-      background-color: white;
-      color: #d47676;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #ffcdd2;
-    }
   }
 }
 </style>

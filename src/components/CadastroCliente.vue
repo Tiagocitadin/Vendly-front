@@ -239,21 +239,37 @@ export default {
         .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o traço
         .slice(0, 15); // Limita ao formato (XX)XXXXX-XXXX
     },
+        validarEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex para validar emails
+      return regex.test(email); // Retorna true se for válido, false caso contrário
+    },
   
     irParaProximaEtapa() {
-      if (!this.cliente.nome || !this.cliente.email || !this.cliente.senha || !this.cliente.cpf || !this.cliente.telefone) {
-        this.errors = {
-          nome: !this.cliente.nome ? "O nome é obrigatório" : "",          
-          email: !this.cliente.email ? "O email é obrigatório" : "",
-          senha: !this.cliente.senha ? "A Senha é obrigatória" : "",
-          cpf: !this.cliente.cpf ? "O CPF é obrigatório" : "",
-          telefone: !this.cliente.telefone ? "O telefone é obrigatório" : "",
-        };
-        return;
-      }
-      this.errors = {};
-      this.etapa = 2;
-    },
+  if (
+    !this.cliente.nome ||
+    !this.cliente.email ||
+    !this.cliente.senha ||
+    !this.cliente.cpf ||
+    !this.cliente.telefone ||
+    !this.validarEmail(this.cliente.email)
+  ) {
+    this.errors = {
+      nome: !this.cliente.nome ? "O nome é obrigatório" : "",
+      email: !this.cliente.email
+        ? "O email é obrigatório"
+        : !this.validarEmail(this.cliente.email)
+        ? "O email deve conter '@' e ser válido"
+        : "",
+      senha: !this.cliente.senha ? "A senha é obrigatória" : "",
+      cpf: !this.cliente.cpf ? "O CPF é obrigatório" : "",
+      telefone: !this.cliente.telefone ? "O telefone é obrigatório" : "",
+    };
+    return;
+  }
+  this.errors = {};
+  this.etapa = 2;
+},
+
   
     async finalizarCadastro() {
   if (

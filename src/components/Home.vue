@@ -97,7 +97,7 @@ body {
   padding: 30px 20px;
   text-align: center;
   width: 100%;
-  margin-top: 120px; 
+  margin-top: 20px; 
 }
 
 .animatedTitle {
