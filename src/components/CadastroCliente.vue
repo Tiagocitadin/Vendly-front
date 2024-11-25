@@ -64,6 +64,7 @@
               placeholder="000.000.000-00"
               @input="cliente.cpf = formataCpf(cliente.cpf)"
               maxlength="14"
+              minlength="14"
               required
             />
             <small v-if="errors.cpf" class="error">{{ errors.cpf }}</small>
