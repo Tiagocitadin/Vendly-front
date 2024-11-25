@@ -27,13 +27,7 @@
         Não tem uma conta? <router-link to="/cadastrocliente">Cadastre-se aqui</router-link>
       </p>
     </div>
-
-    <!-- Botão de Cadastro de Produto -->
-    <div class="product-add" v-if="isLoggedIn">
-      <button @click="irParaCadastroProduto" class="btn-add-product">
-        Cadastrar Produto
-      </button>
-    </div>
+  
   </div>
 </template>
 
@@ -68,10 +62,9 @@ export default {
 
         if (usuario) {
           // Armazena o usuário logado no localStorage
-          localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
-
+          localStorage.setItem("usuarioLogado", JSON.stringify(usuario));         
           // Atualiza o estado de login
-          this.isLoggedIn = true;
+          this.isLoggedIn = true;          
 
           alert("Login realizado com sucesso!");
           this.$router.push("/"); // Redireciona para a página inicial
@@ -82,11 +75,8 @@ export default {
         console.error("Erro ao buscar os usuários:", error);
         alert("Erro ao realizar o login. Tente novamente.");
       }
-    },
-    irParaCadastroProduto() {
-      // Redireciona para a página de cadastro de produto
-      this.$router.push("/cadastroproduto");
-    },
+     
+    },   
   },
 };
 </script>

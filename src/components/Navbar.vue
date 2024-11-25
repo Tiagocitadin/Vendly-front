@@ -2,12 +2,10 @@
   <div>
     <!-- Barra superior: Login e usuário -->
     <div class="login-bar">
-      <div class="user-info">
-        <!-- Verifica se o usuário está logado -->
-        <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>
-        <!-- Caso não esteja logado, exibe o link para login -->
+      <div class="user-info">      
+        <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>       
         <router-link v-else to="/login">Login</router-link>
-        <!-- Substitui o botão de perfil por uma imagem -->
+       
         <img
           v-if="usuarioLogado"
           src="/public/assets/perfil.png"
@@ -16,7 +14,7 @@
           @click="irParaPerfil"
           title="Perfil"
         />
-        <!-- Botão de Cadastro de Produto (ícone) -->
+        <!-- Botão de Cadastro de Produto (ícone) 
         <img
           v-if="usuarioLogado"
           src="/public/assets/cadastro.png"
@@ -24,7 +22,8 @@
           class="btn-add-product"
           @click="irParaCadastroProduto"
           title="Cadastrar Produto"
-        />
+        /> -->
+
         <!-- Exibe o botão de logout se o usuário estiver logado -->
         <button v-if="usuarioLogado" @click="logout">Sair</button>
       </div>
@@ -95,16 +94,17 @@ export default {
       // Redireciona para a página de perfil
       this.$router.push("/perfil");
     },
-    irParaCadastroProduto() {
-      // Redireciona para a página de cadastro de produto
-      this.$router.push("/cadastroproduto");
-    },
+    //Cadastro de produto
+    // irParaCadastroProduto() {
+    // Redireciona para a página de cadastro de produto
+   //  this.$router.push("/cadastroproduto");
+   // },
   },
 };
 </script>
 
 <style lang="scss">
-/* Barra superior: Login */
+
 .login-bar {
   display: flex;
   justify-content: flex-end;
@@ -124,6 +124,7 @@ export default {
       font-weight: bold;
     }
 
+ 
     /* Estilo para imagem do botão de perfil */
     .btn-profile {
       width: 30px; /* Largura do ícone */
@@ -227,5 +228,7 @@ export default {
     min-width: 24px;
     height: 24px;
   }
+
+  
 }
 </style>
