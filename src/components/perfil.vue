@@ -215,10 +215,16 @@ button {
   cursor: pointer;
 }
 
-.btn-editar {
+.btn-editar,
+.btn-atualizar {
   background-color: #007bff;
   color: white;
 }
+
+.btn-editar:hover,
+.btn-atualizar:hover {
+  background-color: #0056b3; /* Cor de fundo mais escura ao passar o mouse */
+} 
 
 .btn-excluir {
   background-color: #dc3545;

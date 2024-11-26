@@ -1,13 +1,11 @@
 <template>
   <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-/>
-
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  />
   <div class="cadastro-container">
     <div class="header">
       <h4>Vendly - Cadastro Cliente</h4>
-
       <span
         v-if="mensagemSucesso"
         class="mensagem-sucesso"
@@ -15,7 +13,6 @@
       >
         Cadastrado com sucesso
       </span>
-      
     </div>
 
     <!-- Etapa 1: Dados Básicos -->
@@ -35,26 +32,25 @@
           </div>
 
           <div class="form-group half-width">
-          <label for="senha">Senha <span>*</span></label>
-          <div class="input-wrapper">
-            <!-- Campo de senha -->
-            <input
-              :type="showPassword ? 'text' : 'password'"
-              id="senha"
-              v-model="cliente.senha"
-              placeholder="Senha"
-              required
-            />
-            <!-- Ícone para alternar a visualização -->
-            <i
-              class="toggle-password"
-              :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
-              @click="togglePassword"
-            ></i>
+            <label for="senha">Senha <span>*</span></label>
+            <div class="input-wrapper">
+              <input
+                :type="showPassword ? 'text' : 'password'"
+                id="senha"
+                v-model="cliente.senha"
+                placeholder="Senha"
+                minlength="6"
+                required
+              />
+              <i
+                class="toggle-password"
+                :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+                @click="togglePassword"
+              ></i>
+            </div>
+            <small v-if="errors.senha" class="error">{{ errors.senha }}</small>
           </div>
-          <!-- Mensagem de erro -->
-          <small v-if="errors.senha" class="error">{{ errors.senha }}</small>
-        </div>
+
           <div class="form-group half-width">
             <label for="cpf">CPF <span>*</span></label>
             <input
@@ -83,7 +79,7 @@
               required
             />
             <small v-if="errors.telefone" class="error">{{ errors.telefone }}</small>
-          </div>          
+          </div>
         </div>
 
         <div class="action-buttons">
@@ -140,19 +136,8 @@
           <div class="form-group half-width">
             <label for="numero">Número </label>
             <input type="text" id="numero" v-model="cliente.endereco.numero" placeholder="Número" />
-            <small v-if="errors.numero" class="error">{{ errors.numero }}</small>
           </div>
-          <div class="form-group half-width">
-            <label for="complemento">Complemento:</label>
-              <textarea
-                id="complemento"
-                v-model="cliente.endereco.complemento"
-                placeholder="Digite a descrição aqui"
-                rows="5"
-                cols="30"
-              ></textarea>             
-          </div>
-        </div>       
+        </div>
 
         <div class="action-buttons">
           <button class="cancel-button" @click="voltarParaEtapaAnterior">Voltar</button>
@@ -175,7 +160,7 @@ export default {
         nome: "",
         email: "",
         senha: "",
-        cpf: "",          
+        cpf: "",
         telefone: "",
         endereco: {
           cep: "",
@@ -184,54 +169,18 @@ export default {
           cidade: "",
           estado: "",
           numero: "",
-          complemento: ""
-          
         },
       },
       errors: {},
-      successMessage: "", 
       showPassword: false,
     };
   },
   methods: {
     togglePassword() {
-      // Alterna entre exibir ou ocultar a senha
       this.showPassword = !this.showPassword;
     },
-    async buscarEnderecoPorCep() {
-      if (!this.cliente.endereco.cep || this.cliente.endereco.cep.length < 8) {
-        this.errors.cep = "CEP inválido ou incompleto";
-        return;
-      }
-      try {
-        const response = await axios.get(`https://viacep.com.br/ws/${this.cliente.endereco.cep}/json/`);
-        if (response.data.erro) {
-          this.errors.cep = "CEP não encontrado";
-          return;
-        }
-        this.cliente.endereco.rua = response.data.logradouro;
-        this.cliente.endereco.bairro = response.data.bairro;
-        this.cliente.endereco.cidade = response.data.localidade;
-        this.cliente.endereco.estado = response.data.uf;
-        this.errors.cep = ""; // Limpa o erro
-      } catch (error) {
-        console.error("Erro ao buscar CEP:", error);
-        this.errors.cep = "Erro ao buscar CEP";
-      }
-    },
-    formataCep(cep) {
-      return cep
-        .replace(/\D/g, "") // Remove tudo que não for número
-        .replace(/(\d{5})(\d)/, "$1-$2") // Coloca o traço após os 5 primeiros dígitos
-        .slice(0, 9); // Limita ao formato XXXXX-XXX
-    },
     formataCpf(cpf) {
-      return cpf
-        .replace(/\D/g, "") // Remove tudo que não for número
-        .replace(/(\d{3})(\d)/, "$1.$2") // Coloca o primeiro ponto
-        .replace(/(\d{3})(\d)/, "$1.$2") // Coloca o segundo ponto
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2") // Coloca o traço
-        .slice(0, 14); // Limita ao formato XXX.XXX.XXX-XX
+      return cpf.replace(/\D/g, "").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
     },
     formataTelefone(telefone) {
       return telefone
@@ -240,99 +189,54 @@ export default {
         .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o traço
         .slice(0, 15); // Limita ao formato (XX)XXXXX-XXXX
     },
-        validarEmail(email) {
-      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex para validar emails
-      return regex.test(email); // Retorna true se for válido, false caso contrário
+    validarEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
     },
-  
     irParaProximaEtapa() {
-  if (
-    !this.cliente.nome ||
-    !this.cliente.email ||
-    !this.cliente.senha ||
-    !this.cliente.cpf ||
-    !this.cliente.telefone ||
-    !this.validarEmail(this.cliente.email)
-  ) {
-    this.errors = {
-      nome: !this.cliente.nome ? "O nome é obrigatório" : "",
-      email: !this.cliente.email
-        ? "O email é obrigatório"
-        : !this.validarEmail(this.cliente.email)
-        ? "O email deve conter '@' e ser válido"
-        : "",
-      senha: !this.cliente.senha ? "A senha é obrigatória" : "",
-      cpf: !this.cliente.cpf ? "O CPF é obrigatório" : "",
-      telefone: !this.cliente.telefone ? "O telefone é obrigatório" : "",
-    };
-    return;
-  }
-  this.errors = {};
-  this.etapa = 2;
-},
+      this.errors = {
+        nome: !this.cliente.nome ? "O nome é obrigatório" : "",
 
-  
-    async finalizarCadastro() {
-  if (
-    !this.cliente.endereco.cep ||
-    !this.cliente.endereco.rua ||
-    !this.cliente.endereco.bairro ||
-    !this.cliente.endereco.cidade ||
-    !this.cliente.endereco.estado
-  ) {
-    this.errors = {
-      cep: !this.cliente.endereco.cep ? "O CEP é obrigatório" : "",
-      rua: !this.cliente.endereco.rua ? "A rua é obrigatória" : "",
-      bairro: !this.cliente.endereco.bairro ? "O bairro é obrigatório" : "",
-      cidade: !this.cliente.endereco.cidade ? "A cidade é obrigatória" : "",
-      estado: !this.cliente.endereco.estado ? "O estado é obrigatório" : "",
-    };
-    return;
-  }
+        email: !this.cliente.email
+          ? "O email é obrigatório"
+          : !this.validarEmail(this.cliente.email)
+          ? "O email deve conter '@' e ser válido"
+          : "",
 
-  try {
-    // Cria uma cópia do objeto cliente e remove o ID
-    const clienteSemId = { ...this.cliente };
-    delete clienteSemId.id; // Remove a propriedade id
+        senha: !this.cliente.senha
+          ? "A senha é obrigatória"
+          : this.cliente.senha.length < 6
+          ? "A senha deve ter pelo menos 6 caracteres"
+          : "",
 
-    // Envia os dados para o servidor
-    const response = await axios.post(
-      "http://localhost:8000/clientes",clienteSemId);
-
-    this.successMessage = "Cliente cadastrado com sucesso!";
-    this.clearForm();
-
-    // Remove a mensagem após 3 segundos
-    setTimeout(() => {
-      this.successMessage = "";
-    }, 3000);
-
-    console.log("Cliente criado com ID:", response.data.id); // Mostra o ID gerado
-  } catch (error) {
-    console.error("Erro ao cadastrar cliente:", error);
-  }
-},
-   
-    voltarParaEtapaAnterior() {
-      this.etapa = 1;
-    },
-    clearForm() {
-      this.cliente = {
-        nome: "",
-        cpf: "",
-        email: "",
-        telefone: "",
-        endereco: {
-          cep: "",
-          rua: "",
-          bairro: "",
-          cidade: "",
-          estado: "",
-          numero: "",
-          complemento: ""
-        },
+        cpf: !this.cliente.cpf ? "O CPF é obrigatório" : "",
+        
+        telefone: !this.cliente.telefone ? "O telefone é obrigatório" : "",
       };
+
+      if (Object.values(this.errors).some((error) => error)) {
+        return;
+      }
+
       this.errors = {};
+      this.etapa = 2;
+    },
+    finalizarCadastro() {
+      this.errors = {
+        cep: !this.cliente.endereco.cep ? "O CEP é obrigatório" : "",
+        rua: !this.cliente.endereco.rua ? "A rua é obrigatória" : "",
+        bairro: !this.cliente.endereco.bairro ? "O bairro é obrigatório" : "",
+        cidade: !this.cliente.endereco.cidade ? "A cidade é obrigatória" : "",
+        estado: !this.cliente.endereco.estado ? "O estado é obrigatório" : "",
+      };
+
+      if (Object.values(this.errors).some((error) => error)) {
+        return;
+      }
+
+      console.log("Cadastro concluído:", this.cliente);
+    },
+    voltarParaEtapaAnterior() {
       this.etapa = 1;
     },
   },
