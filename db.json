@@ -75,74 +75,6 @@
   ],
   "clientes": [
     {
-      "id": "2",
-      "nome": "dvs",
-      "email": "vsdddd",
-      "senha": "444444444444444",
-      "cpf": "444.444.444-44",
-      "telefone": "(44) 44444-4444",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "",
-        "complemento": ""
-      }
-    },
-    {
-      "id": "3",
-      "nome": "drgtryh",
-      "email": "regf",
-      "senha": "444444444444444",
-      "cpf": "444.444.444-44",
-      "telefone": "(44) 44444-4444",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "",
-        "complemento": ""
-      }
-    },
-    {
-      "id": "be68",
-      "nome": "ffff",
-      "email": "ffffff",
-      "senha": "456+789",
-      "cpf": "888.888.888-88",
-      "telefone": "(88) 88888-8888",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "",
-        "complemento": ""
-      }
-    },
-    {
-      "id": "7739",
-      "nome": "Tiago Goulart Citadin",
-      "email": "tyagogc@gmail.com",
-      "senha": "123456",
-      "cpf": "055.555.555-55",
-      "telefone": "48999548935",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "1601",
-        "complemento": ""
-      }
-    },
-    {
       "id": "1a73",
       "nome": "Tiago",
       "email": "tyagogc@gmail.com",
@@ -157,7 +89,8 @@
         "estado": "SC",
         "numero": "1601",
         "complemento": "casa"
-      }
+      },
+      "loginCount": 3
     },
     {
       "id": "fd85",

@@ -7,6 +7,7 @@ import CadastroCliente from '../components/CadastroCliente.vue'
 import CadastroProduto from '../components/CadastroProduto.vue'
 import ListaCadastro from '../components/ListaCadastro.vue'
 import Perfil from '../components/perfil.vue'
+import Acesso from '../components/acesso.vue'
 
 const routes = [
   {
@@ -54,8 +55,11 @@ const routes = [
             name: 'Perfil',
             component: Perfil
           },
-        
-
+          {
+            path: '/acesso',
+            name: 'Acesso',
+            component: Acesso
+          }
 ]
 
 const router = createRouter({

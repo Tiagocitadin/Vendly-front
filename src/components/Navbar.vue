@@ -4,7 +4,7 @@
     <div class="login-bar">
       <div class="user-info">      
         <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>       
-        <router-link v-else to="/login">Login</router-link>
+        <router-link v-else to="/login" class="login">Login</router-link>
        
         <img
           v-if="usuarioLogado"
@@ -25,7 +25,7 @@
         /> -->
 
         <!-- Exibe o botão de logout se o usuário estiver logado -->
-        <button v-if="usuarioLogado" @click="logout">Sair</button>
+        <button v-if="usuarioLogado" @click="logout" class="logout-button">Sair</button>
       </div>
     </div>
 
@@ -51,8 +51,8 @@ import axios from "axios";
 export default {
   data() {
     return {
-      produtos: [], // Produtos serão carregados a partir da API
-      usuarioLogado: null, // Dados do usuário logado
+      produtos: [], 
+      usuarioLogado: null, 
     };
   },
   computed: {
@@ -80,14 +80,13 @@ export default {
           this.produtos = response.data; // Armazena os produtos recebidos da API
         })
         .catch((error) => {
-          console.error("Erro ao buscar produtos:", error); // Exibe erro no console, se houver
+          console.error("Erro ao buscar produtos:", error); 
         });
     },
     logout() {
       // Remover o usuário do localStorage
       localStorage.removeItem("usuarioLogado");
       this.usuarioLogado = null; // Atualizar o estado do componente
-      alert("Você saiu com sucesso!");
       this.$router.push("/login"); // Redirecionar para a página de login
     },
     irParaPerfil() {
@@ -123,8 +122,33 @@ export default {
       font-size: 16px;
       font-weight: bold;
     }
+    
+    .login {
+    background: linear-gradient(to bottom, #4a90e2, #357ABD); /* Gradiente azul */
+    color: #ffffff; /* Cor do texto branca */
+    font-size: 16px; /* Tamanho da fonte */
+    font-weight: bold; /* Negrito */
+    font-family: Arial, sans-serif; /* Fonte padrão */
+    text-transform: uppercase; /* Texto em maiúsculas */
+    border: none; /* Remove bordas padrão */
+    border-radius: 25px; /* Bordas arredondadas */
+    padding: 10px 20px; /* Espaçamento interno */
+    cursor: pointer; /* Cursor de mãozinha */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra leve */
+    transition: all 0.3s ease; /* Transição suave */
+}
 
- 
+.login:hover {
+    background: linear-gradient(to bottom, #357ABD, #4a90e2); /* Inverte gradiente */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Aumenta a sombra */
+    transform: translateY(-2px); /* Efeito de elevação */
+}
+
+.login:active {
+    transform: translateY(2px); /* Clique diminui elevação */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduz sombra */
+}
+
     /* Estilo para imagem do botão de perfil */
     .btn-profile {
       width: 30px; /* Largura do ícone */
@@ -164,6 +188,31 @@ export default {
     button:hover {
       background-color: #ffcdd2;
     }
+    .logout-button {
+    background: linear-gradient(to bottom, #ff5c5c, #e53935); /* Gradiente vermelho */
+    color: #ffffff; /* Cor do texto branca */
+    font-size: 14px; /* Tamanho da fonte */
+    font-weight: bold; /* Negrito */
+    font-family: Arial, sans-serif; /* Fonte padrão */
+    border: none; /* Remove bordas padrão */
+    border-radius: 15px; /* Bordas arredondadas */
+    padding: 5px 15px; /* Espaçamento interno */
+    cursor: pointer; /* Cursor de mãozinha */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra leve */
+    transition: all 0.3s ease; /* Transição suave */
+}
+
+.logout-button:hover {
+    background: linear-gradient(to bottom, #e53935, #ff5c5c); /* Inverte gradiente */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Aumenta a sombra */
+    transform: scale(1.05); /* Leve aumento no hover */
+}
+
+.logout-button:active {
+    transform: scale(0.95); /* Clique reduz o tamanho */
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); /* Reduz sombra */
+}
+
   }
 }
 

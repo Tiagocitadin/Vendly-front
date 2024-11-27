@@ -27,7 +27,6 @@
         Não tem uma conta? <router-link to="/cadastrocliente">Cadastre-se aqui</router-link>
       </p>
     </div>
-  
   </div>
 </template>
 
@@ -40,13 +39,7 @@ export default {
     return {
       email: "",
       password: "",
-      isLoggedIn: false, // Estado para verificar se o usuário está logado
     };
-  },
-  created() {
-    // Verifica se o usuário está logado ao carregar o componente
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
-    this.isLoggedIn = !!usuarioLogado; // Define como true se houver usuário logado
   },
   methods: {
     async handleLogin() {
@@ -61,25 +54,33 @@ export default {
         );
 
         if (usuario) {
-          // Armazena o usuário logado no localStorage
-          localStorage.setItem("usuarioLogado", JSON.stringify(usuario));         
-          // Atualiza o estado de login
-          this.isLoggedIn = true;          
+          // Incrementa o contador de logins
+          const loginCount = (usuario.loginCount || 0) + 1;
+          const atualizado = { ...usuario, loginCount };
 
-          alert("Login realizado com sucesso!");
-          this.$router.push("/"); // Redireciona para a página inicial
+          // Atualiza o cliente no JSON Server
+          await axios.put(`http://localhost:8000/clientes/${usuario.id}`, atualizado);
+
+          // Armazena o usuário logado no localStorage
+          localStorage.setItem("usuarioLogado", JSON.stringify(atualizado));
+          window.location.href = 'this.$router.push("/")';           
+         
         } else {
           alert("Email ou senha inválidos.");
         }
       } catch (error) {
-        console.error("Erro ao buscar os usuários:", error);
+        console.error("Erro ao buscar ou atualizar os usuários:", error);
         alert("Erro ao realizar o login. Tente novamente.");
       }
-     
-    },   
+    },
   },
 };
 </script>
+
+<style scoped>
+/* Adicione os estilos existentes aqui */
+</style>
+
 
 <style scoped>
 /* Página de login */
@@ -120,6 +121,7 @@ export default {
   text-align: center;
   z-index: 1;
   position: relative;
+  margin-bottom: 150px;
 }
 
 .login-container h2 {

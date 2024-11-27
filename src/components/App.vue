@@ -1,8 +1,7 @@
 <template>
   <div id="app">
     <NavBar />
-
-    <!-- Define uma estrutura flexível para conteúdo e footer -->
+   
     <div class="content">
       <router-view />
     </div>
