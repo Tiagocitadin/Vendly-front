@@ -137,6 +137,11 @@
             <label for="numero">Número </label>
             <input type="text" id="numero" v-model="cliente.endereco.numero" placeholder="Número" />
           </div>
+
+          <div class="form-group half-width">
+            <label for="complemento">Complemento </label>
+            <input type="complemento" id="complemento" v-model="cliente.endereco.complemento" placeholder="Digite..." />
+          </div>
         </div>
 
         <div class="action-buttons">
