@@ -270,7 +270,7 @@ export default {
   border-radius: 10px;
   background-color: #f4f7f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 150px;
+  margin-top: 50px;
 }
 
 .senha-container {
