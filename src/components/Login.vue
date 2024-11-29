@@ -12,12 +12,28 @@
       <form @submit.prevent="handleLogin">
         <div class="input-group">
           <label for="email">Email:</label>
-          <input type="email" id="email" v-model="email" required />
+          <div class="input-wrapper">
+            <input type="email" id="email" v-model="email" required />
+          </div>
         </div>
 
         <div class="input-group">
           <label for="password">Senha:</label>
-          <input type="password" id="password" v-model="password" required />
+          <div class="input-wrapper">
+            <input
+              :type="showPassword ? 'text' : 'password'"
+              id="password"
+              v-model="password"
+              required
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              @click="togglePassword"
+            >
+              <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
         </div>
 
         <button type="submit">Entrar</button>
@@ -39,9 +55,13 @@ export default {
     return {
       email: "",
       password: "",
+      showPassword: false, // Estado para alternar a visibilidade da senha
     };
   },
   methods: {
+    togglePassword() {
+      this.showPassword = !this.showPassword;
+    },
     async handleLogin() {
       try {
         // Busca os usuários no db.json
@@ -62,9 +82,8 @@ export default {
           await axios.put(`http://localhost:8000/clientes/${usuario.id}`, atualizado);
 
           // Armazena o usuário logado no localStorage
-          localStorage.setItem("usuarioLogado", JSON.stringify(atualizado));
-          window.location.href = 'this.$router.push("/")';           
-         
+          localStorage.setItem("usuarioLogado", JSON.stringify(atualizado))
+          window.location.href = "/";
         } else {
           alert("Email ou senha inválidos.");
         }
@@ -78,11 +97,6 @@ export default {
 </script>
 
 <style scoped>
-/* Adicione os estilos existentes aqui */
-</style>
-
-
-<style scoped>
 /* Página de login */
 .login-page {
   display: flex;
@@ -92,7 +106,6 @@ export default {
   height: 100vh;
   background-color: #f0f2f5;
   font-family: "Arial", sans-serif;
-  position: relative;
 }
 
 /* Estilização do cabeçalho */
@@ -105,9 +118,6 @@ export default {
   font-size: 28px;
   color: #333;
   font-weight: bold;
-  margin: 0;
-  top: 10%;
-  text-align: center;
 }
 
 /* Container de login */
@@ -119,9 +129,6 @@ export default {
   width: 100%;
   max-width: 400px;
   text-align: center;
-  z-index: 1;
-  position: relative;
-  margin-bottom: 150px;
 }
 
 .login-container h2 {
@@ -145,7 +152,13 @@ export default {
   font-weight: bold;
 }
 
-.input-group input {
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper input {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
@@ -155,8 +168,30 @@ export default {
   transition: all 0.3s;
 }
 
-.input-group input:focus {
+.input-wrapper input:focus {
   border-color: #5c6bc0;
+}
+
+/* Botão de alternar senha */
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+}
+
+.toggle-password:hover {
+  color: #3b4cb8;
+}
+
+/* Ícone de alternar visualização */
+.toggle-password i {
+  pointer-events: none;
 }
 
 /* Botão de login */
@@ -190,25 +225,5 @@ button[type="submit"]:hover {
 
 .register-link a:hover {
   text-decoration: underline;
-}
-
-/* Botão de cadastro de produto */
-.product-add {
-  margin-top: 20px;
-}
-
-.btn-add-product {
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-add-product:hover {
-  background-color: #218838;
 }
 </style>
