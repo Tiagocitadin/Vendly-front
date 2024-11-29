@@ -1,14 +1,10 @@
 <template>
   <div class="acesso-container">
     <h2>Relatório de Acessos</h2>
-    <ul class="perfil-detalhes" v-if="cliente">
-      <li><strong>ID:</strong> {{ cliente.id }}</li>
-      <li><strong>Nome:</strong> {{ cliente.nome }}</li>
-      <li><strong>Email:</strong> {{ cliente.email }}</li>
-      <li><strong>CPF:</strong> {{ cliente.cpf }}</li>
-      <li><strong>Telefone:</strong> {{ cliente.telefone }}</li>
-      <li><strong>Total de Acessos:</strong> {{ cliente.loginCount }}</li>
-    </ul>
+    <div v-if="usuario.id">
+      <p><strong>Contagem de Acessos:</strong> {{ usuario.loginCount }}</p>
+      <p><strong>Data e Hora do Login:</strong> {{ dataHoraLogin }}</p>
+    </div>
     <p v-else>Carregando...</p>
   </div>
 </template>
@@ -19,38 +15,54 @@ import axios from "axios";
 export default {
   data() {
     return {
-      cliente: null,
+      usuario: {
+        id: null,
+        loginCount: 0,
+      },
+      dataHoraLogin: "",
     };
   },
   methods: {
-    async fetchcliente() {
+    async usuarioLogado() {
       try {
         // Recupera o ID do usuário logado no localStorage
-        const clienteLogado = JSON.parse(localStorage.getItem("clienteLogado"));
-        if (!clienteLogado || !clienteLogado.id) {
-          throw new Error("Usuário não está logado.");
+        const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+        console.log("Usuário logado recuperado:", usuarioLogado);
+
+        if (!usuarioLogado || !usuarioLogado.id) {
+          throw new Error("Usuário não está logado ou ID ausente.");
         }
 
         // Obtém os dados do usuário logado do JSON Server
-        const response = await axios.get(`http://localhost:8000/clientes/${clienteLogado.id}`);
-        const cliente = response.data;
+        const response = await axios.get(`http://localhost:8000/clientes/${usuarioLogado.id}`);
+        console.log("Dados do cliente recuperados:", response.data);
+
+        const usuario = response.data;
 
         // Atualiza o contador de logins
-        const atualizado = { ...cliente, loginCount: (cliente.loginCount || 0) + 1 };
+        const atualizado = { ...usuario, loginCount: (usuario.loginCount || 0) + 1 };
 
         // Atualiza os dados no JSON Server
-        await axios.put(`http://localhost:8000/clientes/${cliente.id}`, atualizado);
+        const putResponse = await axios.put(`http://localhost:8000/clientes/${usuario.id}`, atualizado);
+        console.log("Dados atualizados no servidor:", putResponse.data);
 
         // Atualiza os dados no componente
-        this.cliente = atualizado;
+        this.usuario = atualizado;
+
+        // Data e hora do login
+        const now = new Date();
+        this.dataHoraLogin = now.toLocaleString("pt-BR", {
+          dateStyle: "short",
+          timeStyle: "short",
+        });
       } catch (error) {
-        console.error("Erro ao buscar ou atualizar os dados do cliente:", error);
-        alert("Não foi possível carregar as informações do cliente.");
+        console.error("Erro ao buscar ou atualizar os dados do usuário:", error);
+        alert("Não foi possível carregar as informações do usuário.");
       }
     },
   },
   mounted() {
-    this.fetchcliente();
+    this.usuarioLogado();
   },
 };
 </script>
@@ -60,20 +72,19 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }
 
 h2 {
-  text-align: center;
   margin-bottom: 20px;
 }
 
-.perfil-detalhes {
-  list-style: none;
-  padding: 0;
-}
-
-.perfil-detalhes li {
+p {
+  font-size: 18px;
   margin-bottom: 10px;
-  line-height: 1.5;
 }
 </style>

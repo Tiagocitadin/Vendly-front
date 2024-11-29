@@ -1,18 +1,12 @@
 <template>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-  />
   <div class="cadastro-container">
     <div class="header">
       <h4>Vendly - Cadastro Cliente</h4>
-      <span
-        v-if="mensagemSucesso"
-        class="mensagem-sucesso"
-        style="color: green; font-weight: bold;"
-      >
-        Cadastrado com sucesso
-      </span>
+    </div>
+
+    <!-- Mensagem de Sucesso -->
+    <div v-if="mensagemSucesso" class="mensagem-sucesso">
+      <span>Cadastrado com sucesso!</span>
     </div>
 
     <!-- Etapa 1: Dados Básicos -->
@@ -27,7 +21,7 @@
 
           <div class="form-group half-width">
             <label for="email">Email <span>*</span></label>
-            <input type="text" id="email" v-model="cliente.email" placeholder="Email" required />
+            <input type="email" id="email" v-model="cliente.email" placeholder="Email" required />
             <small v-if="errors.email" class="error">{{ errors.email }}</small>
           </div>
 
@@ -42,11 +36,9 @@
                 minlength="6"
                 required
               />
-              <i
-                class="toggle-password"
-                :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
-                @click="togglePassword"
-              ></i>
+              <button type="button" class="toggle-password" @click="togglePassword">
+                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
             </div>
             <small v-if="errors.senha" class="error">{{ errors.senha }}</small>
           </div>
@@ -60,7 +52,6 @@
               placeholder="000.000.000-00"
               @input="cliente.cpf = formataCpf(cliente.cpf)"
               maxlength="14"
-              minlength="14"
               required
             />
             <small v-if="errors.cpf" class="error">{{ errors.cpf }}</small>
@@ -138,9 +129,14 @@
             <input type="text" id="numero" v-model="cliente.endereco.numero" placeholder="Número" />
           </div>
 
-          <div class="form-group half-width">
-            <label for="complemento">Complemento </label>
-            <input type="complemento" id="complemento" v-model="cliente.endereco.complemento" placeholder="Digite..." />
+          <div class="form-group full-width">
+            <label for="complemento">Complemento</label>
+            <textarea
+              id="complemento"
+              v-model="cliente.endereco.complemento"
+              placeholder="Digite..."
+              rows="5"
+            ></textarea>
           </div>
         </div>
 
@@ -152,6 +148,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";
@@ -181,73 +178,89 @@ export default {
     };
   },
   methods: {
-    togglePassword() {
-      this.showPassword = !this.showPassword;
+    async buscarEnderecoPorCep() {
+      const cep = this.cliente.endereco.cep.replace(/\D/g, "");
+      if (cep.length !== 8) {
+        this.errors.cep = "CEP inválido";
+        return;
+      }
+      try {
+        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+        if (response.data.erro) {
+          this.errors.cep = "CEP não encontrado";
+        } else {
+          this.cliente.endereco.rua = response.data.logradouro;
+          this.cliente.endereco.bairro = response.data.bairro;
+          this.cliente.endereco.cidade = response.data.localidade;
+          this.cliente.endereco.estado = response.data.uf;
+          this.errors.cep = "";
+        }
+      } catch (error) {
+        this.errors.cep = "Erro ao buscar CEP";
+        console.error(error);
+      }
+    },
+    async finalizarCadastro() {
+      try {
+        await axios.post("http://localhost:8000/clientes", this.cliente);
+        this.mensagemSucesso = true;
+        setTimeout(() => (this.mensagemSucesso = false), 5000); // Oculta a mensagem após 5 segundos
+        this.cliente = {
+          nome: "",
+          email: "",
+          senha: "",
+          cpf: "",
+          telefone: "",
+          endereco: {
+            cep: "",
+            rua: "",
+            bairro: "",
+            cidade: "",
+            estado: "",
+            numero: "",
+          },
+        };
+        this.etapa = 1;
+      } catch (error) {
+        console.error("Erro ao cadastrar:", error);
+        alert("Erro ao cadastrar cliente");
+      }
     },
     formataCpf(cpf) {
-      return cpf.replace(/\D/g, "").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      return cpf
+        .replace(/\D/g, "")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
     },
     formataTelefone(telefone) {
       return telefone
-        .replace(/\D/g, "") // Remove tudo que não for número
-        .replace(/^(\d{2})(\d)/g, "($1) $2") // Adiciona parênteses
-        .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o traço
-        .slice(0, 15); // Limita ao formato (XX)XXXXX-XXXX
-    },
-    validarEmail(email) {
-      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return regex.test(email);
+        .replace(/\D/g, "")
+        .replace(/^(\d{2})(\d)/g, "($1) $2")
+        .replace(/(\d{5})(\d)/, "$1-$2")
+        .slice(0, 15);
     },
     irParaProximaEtapa() {
       this.errors = {
         nome: !this.cliente.nome ? "O nome é obrigatório" : "",
-
-        email: !this.cliente.email
-          ? "O email é obrigatório"
-          : !this.validarEmail(this.cliente.email)
-          ? "O email deve conter '@' e ser válido"
-          : "",
-
-        senha: !this.cliente.senha
-          ? "A senha é obrigatória"
-          : this.cliente.senha.length < 6
-          ? "A senha deve ter pelo menos 6 caracteres"
-          : "",
-
+        email: !this.cliente.email ? "O email é obrigatório" : "",
+        senha: !this.cliente.senha ? "A senha é obrigatória" : "",
         cpf: !this.cliente.cpf ? "O CPF é obrigatório" : "",
-        
         telefone: !this.cliente.telefone ? "O telefone é obrigatório" : "",
       };
-
-      if (Object.values(this.errors).some((error) => error)) {
-        return;
-      }
-
+      if (Object.values(this.errors).some((error) => error)) return;
       this.errors = {};
       this.etapa = 2;
-    },
-    finalizarCadastro() {
-      this.errors = {
-        cep: !this.cliente.endereco.cep ? "O CEP é obrigatório" : "",
-        rua: !this.cliente.endereco.rua ? "A rua é obrigatória" : "",
-        bairro: !this.cliente.endereco.bairro ? "O bairro é obrigatório" : "",
-        cidade: !this.cliente.endereco.cidade ? "A cidade é obrigatória" : "",
-        estado: !this.cliente.endereco.estado ? "O estado é obrigatório" : "",
-      };
-
-      if (Object.values(this.errors).some((error) => error)) {
-        return;
-      }
-
-      console.log("Cadastro concluído:", this.cliente);
     },
     voltarParaEtapaAnterior() {
       this.etapa = 1;
     },
+    togglePassword() {
+      this.showPassword = !this.showPassword;
+    },
   },
 };
 </script>
-
 <style scoped>
 .cadastro-container {
   max-width: 400px; /* Define uma largura máxima menor */
@@ -290,34 +303,29 @@ input[type="email"] {
   box-sizing: border-box; /* Garante que o padding não altere o tamanho */
 }
 
+/* Estilo para o campo de texto múltiplo */
+textarea {
+  display: block;
+  width: 100%; /* Largura total */
+  max-width: 400px; /* Define um limite máximo */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  resize: none; /* Impede redimensionamento */
+  outline: none;
+  transition: border-color 0.3s ease;
+  height: auto; /* Permite altura dinâmica */
+}
+
 /* Ajuste para foco no campo */
-input:focus {
+input:focus,
+textarea:focus {
   border-color: #007bff;
 }
 
-/* Estilo do botão de alternar senha */
-.toggle-senha {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: #555;
-  padding: 0;
-}
-
-/* Estilo do ícone */
-.toggle-senha i {
-  pointer-events: none;
-}
 
 /* Mensagem de erro */
 .error {
@@ -371,6 +379,19 @@ button:hover {
   text-align: center;
 }
 
+.mensagem-sucesso {
+  text-align: center;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 5px;
+  font-size: 16px;
+  max-width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* Wrapper do campo e ícone */
 .input-wrapper {
   position: relative;
@@ -383,20 +404,39 @@ button:hover {
   flex: 1; /* Ocupa todo o espaço disponível */
   padding-right: 40px; /* Espaço para o ícone */
 }
-
-/* Ícone de alternar visualização */
+/* Botão de alternar senha */
 .toggle-password {
   position: absolute;
   right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
   font-size: 18px;
   color: #555;
-  cursor: pointer;
+  padding: 0;
   transition: color 0.3s ease;
 }
 
 .toggle-password:hover {
-  color: #5c6bc0;
+  color: #007bff;
 }
+
+.toggle-password i {
+  font-size: 18px;
+}
+
+/* Campo de input com espaçamento para o botão */
+.input-wrapper input {
+  flex: 1;
+  padding-right: 40px;
+}
+
+
+
 </style>
 
 
