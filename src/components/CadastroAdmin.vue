@@ -83,13 +83,14 @@ export default {
 <style>
 .admin-container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 50px auto;
   font-family: Arial, sans-serif;
   text-align: left;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
+
 }
 
 h1,

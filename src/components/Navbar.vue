@@ -136,6 +136,7 @@ export default {
     cursor: pointer; /* Cursor de mãozinha */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra leve */
     transition: all 0.3s ease; /* Transição suave */
+    text-decoration: none;
 }
 
 .login:hover {

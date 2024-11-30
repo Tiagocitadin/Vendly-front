@@ -7,10 +7,10 @@
         class="produto"
         :class="{ noCarrinho: produtoNoCarrinho(produto) }"
       >
-        <div
-          class="produto-imagem"
-          :style="{ backgroundImage: `url(http://localhost:8000/${produto.imagem})` }"
-        ></div>
+      <div
+        class="produto-imagem"
+        :style="{ backgroundImage: `url(${produto.imagem})` }"
+      ></div>
 
         <div>
           <h4>{{ produto.nome }}</h4>
@@ -105,11 +105,9 @@ mounted() {
     flex: 0 0 30%;
     box-sizing: border-box;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    padding: 16px;
-    margin-top: 150px;
-    margin-left: 10px;
-    margin-bottom: 50px;
-    height: 700px;
+    padding: 5px;
+    margin: 10px 0 50px 10px;
+    height: 600px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
