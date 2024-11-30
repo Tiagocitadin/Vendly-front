@@ -1,9 +1,16 @@
 <template>
   <div class="acesso-container">
+  <h1>Olá, {{ usuario.nome }}!</h1>
     <h2>Relatório de Acessos</h2>
     <div v-if="usuario.id">
       <p><strong>Contagem de Acessos:</strong> {{ usuario.loginCount }}</p>
-      <p><strong>Data e Hora do Login:</strong> {{ dataHoraLogin }}</p>
+      <p><strong>Data e Hora do Último Login:</strong> {{ dataHoraLogin }}</p>
+      <h3>Histórico de Acessos</h3>
+      <ul>
+        <li v-for="(acesso, index) in usuario.acessos" :key="index">
+          {{ acesso }}
+        </li>
+      </ul>
     </div>
     <p v-else>Carregando...</p>
   </div>
@@ -18,12 +25,13 @@ export default {
       usuario: {
         id: null,
         loginCount: 0,
+        acessos: [], // Histórico de acessos do usuário
       },
       dataHoraLogin: "",
     };
   },
   methods: {
-    async usuarioLogado() {
+    async registrarLogin() {
       try {
         // Recupera o ID do usuário logado no localStorage
         const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
@@ -33,14 +41,24 @@ export default {
           throw new Error("Usuário não está logado ou ID ausente.");
         }
 
-        // Obtém os dados do usuário logado do JSON Server
+        // Obtém os dados do usuário do servidor
         const response = await axios.get(`http://localhost:8000/clientes/${usuarioLogado.id}`);
         console.log("Dados do cliente recuperados:", response.data);
 
         const usuario = response.data;
 
-        // Atualiza o contador de logins
-        const atualizado = { ...usuario, loginCount: (usuario.loginCount || 0) + 1 };
+        // Atualiza o contador e o histórico de acessos
+        const now = new Date();
+        const dataHoraAtual = now.toLocaleString("pt-BR", {
+          dateStyle: "short",
+          timeStyle: "short",
+        });
+
+        const atualizado = {
+          ...usuario,
+          loginCount: (usuario.loginCount || 0) + 1,
+          acessos: [...(usuario.acessos || []), dataHoraAtual], // Adiciona a nova data ao histórico
+        };
 
         // Atualiza os dados no JSON Server
         const putResponse = await axios.put(`http://localhost:8000/clientes/${usuario.id}`, atualizado);
@@ -49,20 +67,16 @@ export default {
         // Atualiza os dados no componente
         this.usuario = atualizado;
 
-        // Data e hora do login
-        const now = new Date();
-        this.dataHoraLogin = now.toLocaleString("pt-BR", {
-          dateStyle: "short",
-          timeStyle: "short",
-        });
+        // Define a data e hora do login atual
+        this.dataHoraLogin = dataHoraAtual;
       } catch (error) {
-        console.error("Erro ao buscar ou atualizar os dados do usuário:", error);
-        alert("Não foi possível carregar as informações do usuário.");
+        console.error("Erro ao registrar o login do usuário:", error);
+        alert("Não foi possível registrar o login.");
       }
     },
   },
   mounted() {
-    this.usuarioLogado();
+    this.registrarLogin();
   },
 };
 </script>
@@ -77,14 +91,31 @@ export default {
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
+  text-align: left;
 }
 
 h2 {
   margin-bottom: 20px;
 }
 
+h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
 p {
   font-size: 18px;
   margin-bottom: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  font-size: 16px;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
 }
 </style>

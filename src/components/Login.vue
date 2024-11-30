@@ -129,6 +129,7 @@ export default {
   width: 100%;
   max-width: 400px;
   text-align: center;
+  margin-bottom: 180px;
 }
 
 .login-container h2 {

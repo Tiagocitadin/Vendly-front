@@ -73,6 +73,13 @@
       "maisVendido": true
     }
   ],
+  "admins": [
+    {
+      "id": "ec9c",
+      "usuario": "tiago.citadin",
+      "senha": "123456"
+    }
+  ],
   "clientes": [
     {
       "id": "1a73",
@@ -90,57 +97,21 @@
         "numero": "1601",
         "complemento": "casa"
       },
-      "loginCount": 16
-    },
-    {
-      "id": "fd85",
-      "nome": "ttt",
-      "email": "teste@gmail.com",
-      "senha": "123456",
-      "cpf": "451.222.2",
-      "telefone": "(44) 44444-4444",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "",
-        "complemento": ""
-      },
-      "loginCount": 1
-    },
-    {
-      "id": "109a",
-      "nome": "Tiago goulart citadin",
-      "email": "tyagogc@gmail.com",
-      "senha": "123456",
-      "cpf": "999.999.999-99",
-      "telefone": "(48) 99989-8040",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "1601"
-      }
-    },
-    {
-      "id": "d745",
-      "nome": "Tiago goulart citadin",
-      "email": "tyagogc@gmail.com",
-      "senha": "123456",
-      "cpf": "666.666.666-66",
-      "telefone": "(48) 99989-8040",
-      "endereco": {
-        "cep": "88702295",
-        "rua": "Rua Galdino José de Bessa",
-        "bairro": "Oficinas",
-        "cidade": "Tubarão",
-        "estado": "SC",
-        "numero": "2654"
-      }
+      "loginCount": 31,
+      "acessos": [
+        "30/11/2024, 14:26",
+        "30/11/2024, 14:26",
+        "30/11/2024, 14:26",
+        "30/11/2024, 14:27",
+        "30/11/2024, 14:27",
+        "30/11/2024, 14:27",
+        "30/11/2024, 14:27",
+        "30/11/2024, 14:30",
+        "30/11/2024, 14:32",
+        "30/11/2024, 14:38",
+        "30/11/2024, 14:39",
+        "30/11/2024, 14:39"
+      ]
     }
   ]
 }

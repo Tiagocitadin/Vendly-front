@@ -4,7 +4,6 @@
 
     <!-- Exibe as informações do usuário em uma lista -->
     <ul class="perfil-detalhes">
-      <li><strong>Contagem de Acesso:</strong> {{ usuario.loginCount }}</li>
       <li><strong>Nome:</strong> {{ usuario.nome }}</li>
       <li><strong>Email:</strong> {{ usuario.email }}</li>
       <li><strong>CPF:</strong> {{ usuario.cpf }}</li>
@@ -109,8 +108,7 @@ export default {
           cidade: "",
           estado: "",
           numero: "",
-          complemento: "",
-          loginCount: ""
+          complemento: ""       
         },
       },
       modoEdicao: false, // Controla se o formulário de edição está visível

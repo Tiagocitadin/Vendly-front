@@ -8,7 +8,7 @@
        
         <img
           v-if="usuarioLogado"
-          src="/public/assets/perfil.png"
+          src="/assets/perfil.png"
           alt="Perfil"
           class="btn-profile"
           @click="irParaPerfil"

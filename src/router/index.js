@@ -8,6 +8,8 @@ import CadastroProduto from '../components/CadastroProduto.vue'
 import ListaCadastro from '../components/ListaCadastro.vue'
 import Perfil from '../components/perfil.vue'
 import Acesso from '../components/acesso.vue'
+import Admin from '../components/admin.vue'
+import CadastroAdmin from '../components/CadastroAdmin.vue'
 
 const routes = [
   {
@@ -59,8 +61,21 @@ const routes = [
             path: '/acesso',
             name: 'Acesso',
             component: Acesso
-          }
+          },
+          {
+            path: '/admin',
+            name: 'Admin',
+            component: Admin
+          },
+          {
+            path: '/cadastroAdmin',
+            name: 'CadastroAdmin',
+            component: CadastroAdmin
+          },
+         
+         
 ]
+
 
 const router = createRouter({
   history: createWebHashHistory(),
