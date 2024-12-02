@@ -43,7 +43,10 @@
           </div>
         </div>
 
-        <button type="submit" class="submit-button">Cadastrar</button>
+        <button type="submit" class="submit-button_cadastrar">Cadastrar</button>
+        <button type="button" class="submit-button_limpar" @click="clearForm">Limpar Formulário</button>
+
+
       </form>
     </div>
   </div>
@@ -139,12 +142,10 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
   color: #333;  
-  margin-left: 550px;
-  margin-top: 150px;
-  margin-bottom: 50px;
+  margin: 50px 0 50px 550px;
+
 }
 
-/* Cabeçalho */
 .header h4 {
   text-align: center;
   margin-bottom: 20px;
@@ -210,7 +211,21 @@ export default {
 }
 
 /* Estilizando os botões */
-.submit-button {
+.submit-button_cadastrar {
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+
+}
+
+.submit-button_limpar {
+  margin-left: 10px;
   padding: 12px 20px;
   font-size: 14px;
   font-weight: bold;
@@ -221,6 +236,7 @@ export default {
   cursor: pointer;
   margin-top: 10px;
 }
+
 
 .submit-button:hover {
   background-color: #0056b3;

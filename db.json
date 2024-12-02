@@ -75,9 +75,16 @@
   ],
   "admins": [
     {
-      "id": "ec9c",
-      "usuario": "tiago.citadin",
-      "senha": "123456"
+      "id": "1",
+      "usuario": "admin1",
+      "senha": "123456",
+      "tipoAdmin": "admin"
+    },
+    {
+      "usuario": "teste",
+      "senha": "123456789",
+      "tipoAdmin": "admin",
+      "id": "75e3"
     }
   ],
   "clientes": [
@@ -97,7 +104,7 @@
         "numero": "1601",
         "complemento": "casa"
       },
-      "loginCount": 31,
+      "loginCount": 33,
       "acessos": [
         "30/11/2024, 14:26",
         "30/11/2024, 14:26",
@@ -110,7 +117,8 @@
         "30/11/2024, 14:32",
         "30/11/2024, 14:38",
         "30/11/2024, 14:39",
-        "30/11/2024, 14:39"
+        "30/11/2024, 14:39",
+        "02/12/2024, 11:14"
       ]
     }
   ]
