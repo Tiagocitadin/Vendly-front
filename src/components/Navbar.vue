@@ -16,6 +16,11 @@
         />
         <button v-if="usuarioLogado" @click="logout" class="logout-button">Sair</button>
       </div>
+
+      <!-- Botão de modo escuro -->
+      <button class="dark-mode-toggle" @click="$emit('toggle-dark-mode')">
+        <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+      </button>
     </div>
 
     <!-- Barra inferior: Navegação -->
@@ -40,8 +45,15 @@
   </div>
 </template>
 
+
 <script>
 export default {
+  props: {
+    isDarkMode: {
+      type: Boolean,
+      required: true,
+    },
+  },
   data() {
     return {
       produtos: [],
@@ -62,7 +74,6 @@ export default {
   },
   methods: {
     fetchProdutos() {
-      // Simulação de chamada de API para obter produtos
       console.log("Fetching produtos...");
     },
     logout() {
@@ -76,8 +87,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style lang="scss">
 
@@ -158,26 +167,29 @@ export default {
 }
 
 /* Barra inferior: Navegação */
+/* Barra inferior: Navegação */
 #nav {
   display: flex;
   align-items: center;
   justify-content: flex-start; /* Alinha menus ao canto esquerdo */
   background-color: #000000;
   color: #ffffff;
-  padding: 10px 20px;
+  padding: 10px 0; /* Ajusta para centralizar verticalmente sem espaçamento lateral extra */
   height: 60px;
+ 
 }
 
 #nav nav ul {
   display: flex;
   list-style: none;
   margin: 0;
-  padding: 0;
-  gap: 20px; /* Espaçamento entre os itens */
+  padding: 0 20px; /* Espaçamento lateral para começar à esquerda */
+  gap: 50px; /* Espaçamento entre os itens */
 }
 
 #nav nav ul li {
-  display: inline-block;
+  display: inline-flex; /* Garante alinhamento dos itens */
+  align-items: center; /* Alinha verticalmente */
 }
 
 #nav nav ul li a {
@@ -189,6 +201,7 @@ export default {
 
 #nav nav ul li a.router-link-exact-active {
   color: #1efd00;
+  
 }
 
 .carrinho-link {
@@ -231,5 +244,20 @@ export default {
   height: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+.dark-mode-toggle {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.dark-mode-toggle:hover {
+  color: #ffd700;
+}
+
 
 </style>

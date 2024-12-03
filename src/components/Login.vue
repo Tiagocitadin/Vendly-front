@@ -1,44 +1,33 @@
 <template>
-  <div class="login-page">
-    <!-- Cabeçalho -->
-    <div class="login">
+  <div class="login-container">
+    <div class="header">
       <h4>Vendly - Login</h4>
     </div>
 
-    <!-- Formulário de Login -->
-    <div class="login-container">
+    <div class="form-wrapper">
       <h2>Entre na sua conta</h2>
-
       <form @submit.prevent="handleLogin">
-        <div class="input-group">
-          <label for="email">Email:</label>
-          <div class="input-wrapper">
-            <input type="email" id="email" v-model="email" required />
-          </div>
+        <div class="form-group">
+          <label for="email">Email <span>*</span></label>
+          <input type="email" id="email" v-model="email" placeholder="Email" required />
         </div>
-
-        <div class="input-group">
-          <label for="password">Senha:</label>
+        <div class="form-group">
+          <label for="password">Senha <span>*</span></label>
           <div class="input-wrapper">
             <input
               :type="showPassword ? 'text' : 'password'"
               id="password"
               v-model="password"
+              placeholder="Senha"
               required
             />
-            <button
-              type="button"
-              class="toggle-password"
-              @click="togglePassword"
-            >
+            <button type="button" class="toggle-password" @click="togglePassword">
               <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
           </div>
         </div>
-
-        <button type="submit">Entrar</button>
+        <button type="submit" class="submit-button">Entrar</button>
       </form>
-
       <p class="register-link">
         Não tem uma conta? <router-link to="/cadastrocliente">Cadastre-se aqui</router-link>
       </p>
@@ -47,180 +36,125 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
-  name: "Login",
   data() {
     return {
       email: "",
       password: "",
-      showPassword: false, // Estado para alternar a visibilidade da senha
+      showPassword: false,
     };
   },
   methods: {
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
-    async handleLogin() {
-      try {
-        // Busca os usuários no db.json
-        const response = await axios.get("http://localhost:8000/clientes");
-        const usuarios = response.data;
-
-        // Verifica se o email e senha correspondem a algum registro
-        const usuario = usuarios.find(
-          (user) => user.email === this.email && user.senha === this.password
-        );
-
-        if (usuario) {
-          // Incrementa o contador de logins
-          const loginCount = (usuario.loginCount || 0) + 1;
-          const atualizado = { ...usuario, loginCount };
-
-          // Atualiza o cliente no JSON Server
-          await axios.put(`http://localhost:8000/clientes/${usuario.id}`, atualizado);
-
-          // Armazena o usuário logado no localStorage
-          localStorage.setItem("usuarioLogado", JSON.stringify(atualizado))
-          window.location.href = "/";
-        } else {
-          alert("Email ou senha inválidos.");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar ou atualizar os usuários:", error);
-        alert("Erro ao realizar o login. Tente novamente.");
-      }
+    handleLogin() {
+      // Lógica para realizar o login
+      console.log("Logando com:", this.email, this.password);
     },
   },
 };
 </script>
 
 <style scoped>
-/* Página de login */
-.login-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f0f2f5;
-  font-family: "Arial", sans-serif;
+/* Estilo principal */
+.login-container {
+  max-width: 400px;
+  width: 90%;
+  margin: 80px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #f4f7f9; /* Fundo igual ao cadastro */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
-/* Estilização do cabeçalho */
-.login {
-  text-align: center;
+/* Cabeçalho */
+.header h4 {
+  font-size: 24px;
+  color: #007bff; /* Azul padrão */
   margin-bottom: 20px;
 }
 
-.login h4 {
-  font-size: 28px;
+/* Formulário */
+h2 {
+  font-size: 20px;
   color: #333;
-  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-/* Container de login */
-.login-container {
-  background-color: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  margin-bottom: 180px;
-}
-
-.login-container h2 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 30px;
-  font-weight: bold;
-}
-
-/* Grupo de inputs */
-.input-group {
+.form-group {
   margin-bottom: 20px;
   text-align: left;
 }
 
-.input-group label {
-  display: block;
+label {
   font-size: 14px;
-  color: #555;
-  margin-bottom: 8px;
   font-weight: bold;
+  color: #333;
 }
 
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-wrapper input {
+input {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
   outline: none;
-  transition: all 0.3s;
+  transition: border-color 0.3s ease;
 }
 
-.input-wrapper input:focus {
-  border-color: #5c6bc0;
+input:focus {
+  border-color: #007bff;
 }
 
 /* Botão de alternar senha */
+.input-wrapper {
+  position: relative;
+}
+
 .toggle-password {
   position: absolute;
-  right: 10px;
   top: 50%;
+  right: 10px;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 18px;
-  color: #666;
+  font-size: 16px;
+  color: #333;
 }
 
 .toggle-password:hover {
-  color: #3b4cb8;
+  color: #007bff;
 }
 
-/* Ícone de alternar visualização */
-.toggle-password i {
-  pointer-events: none;
-}
-
-/* Botão de login */
-button[type="submit"] {
+/* Botão de envio */
+.submit-button {
   width: 100%;
-  padding: 14px;
-  background-color: #5c6bc0;
-  color: white;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-button[type="submit"]:hover {
-  background-color: #3b4cb8;
+.submit-button:hover {
+  background-color: #0056b3;
 }
 
-/* Link de cadastro */
+/* Link de registro */
 .register-link {
-  margin-top: 20px;
+  margin-top: 15px;
   font-size: 14px;
   color: #666;
 }
 
 .register-link a {
-  color: #5c6bc0;
+  color: #007bff;
   text-decoration: none;
 }
 
