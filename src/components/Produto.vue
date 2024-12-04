@@ -92,7 +92,6 @@ mounted() {
 
 };
 
-
 </script>
 
 <style lang="scss">
@@ -106,11 +105,12 @@ mounted() {
     box-sizing: border-box;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     padding: 5px;
-    margin: 10px 0 50px 10px;
-    height: 600px;
+    margin: 50px 0 50px 10px;
+    height: 500px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+ 
     
 
     @media only screen and (max-width: 769px) {

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ 'dark-mode': isDarkMode }">
     <NavBar
       :isDarkMode="isDarkMode"
       @toggle-dark-mode="toggleDarkMode"
@@ -12,9 +12,10 @@
 </template>
 
 
+
 <script>
-import NavBar from '../components/Navbar.vue';
-import Footer from '../components/Footer.vue';
+import NavBar from "../components/Navbar.vue";
+import Footer from "../components/Footer.vue";
 
 export default {
   components: {
@@ -28,21 +29,30 @@ export default {
   },
   created() {
     // Recupera o estado do tema no localStorage
-    const savedTheme = localStorage.getItem('isDarkMode');
-    if (savedTheme === 'true') {
+    const savedTheme = localStorage.getItem("isDarkMode");
+    if (savedTheme === "true") {
       this.isDarkMode = true;
+      document.body.classList.add("dark-mode"); // Aplica o tema escuro ao body
     }
 
-    this.$store.dispatch('carregarProdutos');
+    this.$store.dispatch("carregarProdutos");
     document.title = "Vendly";
   },
   methods: {
     toggleDarkMode() {
-      this.isDarkMode = !this.isDarkMode; // Alterna entre os temas
-      localStorage.setItem('isDarkMode', this.isDarkMode); // Salva a preferência no localStorage
+      this.isDarkMode = !this.isDarkMode;
+      localStorage.setItem("isDarkMode", this.isDarkMode); // Salva a preferência no localStorage
+
+      // Aplica ou remove a classe "dark-mode" no body
+      if (this.isDarkMode) {
+        document.body.classList.add("dark-mode");
+      } else {
+        document.body.classList.remove("dark-mode");
+      }
     },
   },
-};
+ };
+ 
 </script>
 
 <style lang="scss">
@@ -79,16 +89,16 @@ footer {
 }
 
 /* Tema Escuro */
-.dark-mode {
+body.dark-mode {
   background-color: #121212;
   color: #ffffff;
 }
 
-.dark-mode footer {
+body.dark-mode footer {
   background-color: #222;
 }
 
-.dark-mode .theme-toggle button {
+body.dark-mode .theme-toggle button {
   background-color: #333;
   color: #ffffff;
 }
@@ -113,4 +123,5 @@ footer {
 .theme-toggle button:hover {
   background-color: #3b4cb8;
 }
+
 </style>

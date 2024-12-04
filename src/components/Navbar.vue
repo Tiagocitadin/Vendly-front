@@ -1,10 +1,10 @@
 <template>
   <div>
-    <!-- Barra superior: Login e usuário -->
+   
     <div class="login-bar">
       <div class="user-info">
         <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>
-        <router-link v-else to="/login" class="login">Login</router-link>
+        <router-link v-else to="/login" class="login-nav">Login</router-link>
 
         <img
           v-if="usuarioLogado"
@@ -14,13 +14,22 @@
           @click="irParaPerfil"
           title="Perfil"
         />
-        <button v-if="usuarioLogado" @click="logout" class="logout-button">Sair</button>
+        <img v-if="usuarioLogado" src="/public/assets/acesso.png" alt="acesso"
+        class="btn-profile"
+        @click="irParaAcesso"
+        title="Acesso">
+        <button v-if="usuarioLogado" @click="logout" class="logout-button" title="Sair">Sair</button>
       </div>
 
       <!-- Botão de modo escuro -->
-      <button class="dark-mode-toggle" @click="$emit('toggle-dark-mode')">
-        <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
-      </button>
+        <button
+          class="dark-mode-toggle"
+          :class="{ 'dark-mode': isDarkMode, 'light-mode': !isDarkMode }"
+          @click="$emit('toggle-dark-mode')"
+          :title="isDarkMode ? 'Modo Claro' : 'Modo Escuro'" >
+          <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+        </button>
+
     </div>
 
     <!-- Barra inferior: Navegação -->
@@ -56,8 +65,8 @@ export default {
   },
   data() {
     return {
-      produtos: [],
-      usuarioLogado: null,
+      produtos: [], // Produtos disponíveis
+      usuarioLogado: null, // Informações do usuário logado
     };
   },
   computed: {
@@ -70,7 +79,12 @@ export default {
     if (usuario) {
       this.usuarioLogado = JSON.parse(usuario);
     }
-    this.fetchProdutos();
+
+    // Recupera o estado do modo escuro do localStorage
+    const savedTheme = localStorage.getItem("isDarkMode");
+    if (savedTheme === "true") {
+      this.enableDarkMode();
+    }
   },
   methods: {
     fetchProdutos() {
@@ -84,19 +98,39 @@ export default {
     irParaPerfil() {
       this.$router.push("/perfil");
     },
+    irParaAcesso(){
+      this.$router.push("/acesso");
+    },
+    toggleDarkMode() {
+      if (this.isDarkMode) {
+        this.disableDarkMode();
+      } else {
+        this.enableDarkMode();
+      }
+    },
+    enableDarkMode() {
+      this.isDarkMode = true;
+      localStorage.setItem("isDarkMode", true);
+      document.body.classList.add("dark-mode");
+    },
+    disableDarkMode() {
+      this.isDarkMode = false;
+      localStorage.setItem("isDarkMode", false);
+      document.body.classList.remove("dark-mode");
+    },
   },
 };
 </script>
 
+
 <style lang="scss">
 
-/* Barra superior: Login e usuário */
 .login-bar {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  background-color: #d47676;
-  color: white;
+  background-color: white;
+  color:black;
   padding: 10px 20px;
   height: 50px;
 }
@@ -112,7 +146,7 @@ export default {
   font-weight: bold;
 }
 
-.login {
+.login-nav {
   background: linear-gradient(to bottom, #4a90e2, #357abd);
   color: #ffffff;
   font-size: 16px;
@@ -127,7 +161,7 @@ export default {
   text-decoration: none;
 }
 
-.login:hover {
+.login-nav:hover {
   background: linear-gradient(to bottom, #357abd, #4a90e2);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
@@ -166,8 +200,7 @@ export default {
   transform: scale(0.95);
 }
 
-/* Barra inferior: Navegação */
-/* Barra inferior: Navegação */
+
 #nav {
   display: flex;
   align-items: center;
@@ -245,19 +278,29 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 .dark-mode-toggle {
-  background: none;
   border: none;
-  color: #ffffff;
   font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
   margin-left: 10px;
+  transition: color 0.3s ease;
+}
+
+.dark-mode-toggle.dark-mode {
+  color: #ffd700; /* Cor amarelo para o ícone de sol */
+  background: white;
+}
+
+.dark-mode-toggle.light-mode {
+  color: black; /* Cor preta para o ícone de lua */
+  background: white;
 }
 
 .dark-mode-toggle:hover {
-  color: #ffd700;
+  transform: scale(1.1); /* Leve aumento no hover */
 }
+
 
 
 </style>
