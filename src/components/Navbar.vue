@@ -1,6 +1,5 @@
 <template>
   <div>
-   
     <div class="login-bar">
       <div class="user-info">
         <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>
@@ -14,25 +13,32 @@
           @click="irParaPerfil"
           title="Perfil"
         />
-        <img v-if="usuarioLogado" src="/public/assets/acesso.png" alt="acesso"
-        class="btn-profile"
-        @click="irParaAcesso"
-        title="Acesso">
-        <button v-if="usuarioLogado" @click="logout" class="logout-button" title="Sair">Sair</button>
+        <img
+          v-if="usuarioLogado"
+          src="/assets/acesso.png"
+          alt="Acesso"
+          class="btn-profile"
+          @click="irParaAcesso"
+          title="Acesso"
+        />
+        <button
+          v-if="usuarioLogado"
+          @click="logout"
+          class="logout-button"
+          title="Sair"
+        >sair</button>
       </div>
 
-      <!-- Botão de modo escuro -->
-        <button
-          class="dark-mode-toggle"
-          :class="{ 'dark-mode': isDarkMode, 'light-mode': !isDarkMode }"
-          @click="$emit('toggle-dark-mode')"
-          :title="isDarkMode ? 'Modo Claro' : 'Modo Escuro'" >
-          <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
-        </button>
-
+      <button
+        class="dark-mode-toggle"
+        :class="{ 'dark-mode': isDarkMode, 'light-mode': !isDarkMode }"
+        @click="$emit('toggle-dark-mode')"
+        :title="isDarkMode ? 'Modo Claro' : 'Modo Escuro'"
+      >
+        <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+      </button>
     </div>
 
-    <!-- Barra inferior: Navegação -->
     <div id="nav">
       <nav>
         <ul>
@@ -41,7 +47,7 @@
           <li class="carrinho-link">
             <router-link to="/carrinho">
               <div class="carrinho-icon">
-                <img src="/public/assets/carrinho-de-compras (1).png" alt="Carrinho de compra" />
+                <img src="/assets/carrinho-de-compras (1).png" alt="Carrinho de compra" />
                 <span class="cart-count" v-if="produtosCarrinho.length > 0">
                   {{ produtosCarrinho.length }}
                 </span>
@@ -53,7 +59,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -93,12 +98,12 @@ export default {
     logout() {
       localStorage.removeItem("usuarioLogado");
       this.usuarioLogado = null;
-      this.$router.push("/login");
+      this.$router.push("/feedback");
     },
     irParaPerfil() {
       this.$router.push("/perfil");
     },
-    irParaAcesso(){
+    irParaAcesso() {
       this.$router.push("/acesso");
     },
     toggleDarkMode() {
@@ -122,15 +127,13 @@ export default {
 };
 </script>
 
-
 <style lang="scss">
-
 .login-bar {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   background-color: white;
-  color:black;
+  color: black;
   padding: 10px 20px;
   height: 50px;
 }
@@ -200,29 +203,38 @@ export default {
   transform: scale(0.95);
 }
 
+.sair {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.sair:hover {
+  transform: scale(1.1);
+}
 
 #nav {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Alinha menus ao canto esquerdo */
+  justify-content: flex-start;
   background-color: #000000;
   color: #ffffff;
-  padding: 10px 0; /* Ajusta para centralizar verticalmente sem espaçamento lateral extra */
+  padding: 10px 0;
   height: 60px;
- 
 }
 
 #nav nav ul {
   display: flex;
   list-style: none;
   margin: 0;
-  padding: 0 20px; /* Espaçamento lateral para começar à esquerda */
-  gap: 50px; /* Espaçamento entre os itens */
+  padding: 0 20px;
+  gap: 50px;
 }
 
 #nav nav ul li {
-  display: inline-flex; /* Garante alinhamento dos itens */
-  align-items: center; /* Alinha verticalmente */
+  display: inline-flex;
+  align-items: center;
 }
 
 #nav nav ul li a {
@@ -234,7 +246,6 @@ export default {
 
 #nav nav ul li a.router-link-exact-active {
   color: #1efd00;
-  
 }
 
 .carrinho-link {
@@ -253,7 +264,6 @@ export default {
   height: auto;
   cursor: pointer;
   transition: transform 0.3s ease;
-
 }
 
 .carrinho-icon img:hover {
@@ -273,10 +283,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: left;
-  min-width: 20px;
-  height: 20px;
+  min-width: 10px;
+  min-height: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
 .dark-mode-toggle {
   border: none;
   font-size: 18px;
@@ -288,19 +299,16 @@ export default {
 }
 
 .dark-mode-toggle.dark-mode {
-  color: #ffd700; /* Cor amarelo para o ícone de sol */
+  color: #ffd700;
   background: white;
 }
 
 .dark-mode-toggle.light-mode {
-  color: black; /* Cor preta para o ícone de lua */
+  color: black;
   background: white;
 }
 
 .dark-mode-toggle:hover {
-  transform: scale(1.1); /* Leve aumento no hover */
+  transform: scale(1.1);
 }
-
-
-
 </style>

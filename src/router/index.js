@@ -10,6 +10,7 @@ import Perfil from '../components/perfil.vue'
 import Acesso from '../components/acesso.vue'
 import Admin from '../components/admin.vue'
 import CadastroAdmin from '../components/CadastroAdmin.vue'
+import Feedback from '../components/feedback.vue'
 
 const routes = [
   {
@@ -72,6 +73,11 @@ const routes = [
             name: 'CadastroAdmin',
             component: CadastroAdmin
           },
+          {
+            path: '/feedback',
+            name: 'Feedback',
+            component: Feedback
+          }       
          
          
 ]
