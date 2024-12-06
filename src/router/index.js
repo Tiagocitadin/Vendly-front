@@ -10,7 +10,8 @@ import Perfil from '../components/perfil.vue'
 import Acesso from '../components/acesso.vue'
 import Admin from '../components/admin.vue'
 import CadastroAdmin from '../components/CadastroAdmin.vue'
-import Feedback from '../components/feedback.vue'
+import Feedback from '../components/Feedback.vue'
+import Confirmarcompra from '../components/Confirmarcompra.vue'
 
 const routes = [
   {
@@ -27,62 +28,64 @@ const routes = [
     path: '/produto',
     name: 'Produto',
     component: Produto
-    },
-    {
-      path: '/cadastroproduto',
-      name: 'CadastroProduto',
-      component: CadastroProduto
-      },
-      {
-        path: '/login',
-        name: 'Login',
-        component: Login
-        },
-        {
-          path: '/cadastrocliente',
-          name: 'CadastroCliente',
-          component: CadastroCliente
-          },
-          {
-            path: '/registro',
-            name: 'Registro',
-            component: Login
-          },
-          {
-            path: '/listarproduto',
-            name: 'ListaCadastro',
-            component: ListaCadastro
-          },
-          {
-            path: '/perfil',
-            name: 'Perfil',
-            component: Perfil
-          },
-          {
-            path: '/acesso',
-            name: 'Acesso',
-            component: Acesso
-          },
-          {
-            path: '/admin',
-            name: 'Admin',
-            component: Admin
-          },
-          {
-            path: '/cadastroAdmin',
-            name: 'CadastroAdmin',
-            component: CadastroAdmin
-          },
-          {
-            path: '/feedback',
-            name: 'Feedback',
-            component: Feedback
-          }       
-         
+  },
+  {
+  path: '/cadastroproduto',
+  name: 'CadastroProduto',
+  component: CadastroProduto
+  },
+  {
+  path: '/login',
+  name: 'Login',
+  component: Login
+  },
+  {
+  path: '/cadastrocliente',
+  name: 'CadastroCliente',
+  component: CadastroCliente
+  },
+  {
+  path: '/registro',
+  name: 'Registro',
+  component: Login
+  },
+  {
+  path: '/listarproduto',
+  name: 'ListaCadastro',
+  component: ListaCadastro
+  },
+  {
+  path: '/perfil',
+  name: 'Perfil',
+  component: Perfil
+  },
+  {
+  path: '/acesso',
+  name: 'Acesso',
+  component: Acesso
+  },
+  {
+  path: '/admin',
+  name: 'Admin',
+  component: Admin
+  },
+  {
+  path: '/cadastroAdmin',
+  name: 'CadastroAdmin',
+  component: CadastroAdmin
+  },
+  {
+  path: '/feedback',
+  name: 'Feedback',
+  component: Feedback
+  },
+  {
+  path: '/confirmar-compra',
+  name: 'Confirmarcompra',
+  component: Confirmarcompra
+  },
          
 ]
-
-
 const router = createRouter({
   history: createWebHashHistory(),
   routes

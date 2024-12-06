@@ -26,7 +26,7 @@
       <button @click="submitFeedback" :disabled="!rating">Enviar Avaliação</button>
   
       <div v-if="submitted" class="feedback-thank-you">
-        <p>Obrigado por seu feedback!</p>
+        <p>Obrigado!</p>
       </div>
     </div>
   </template>

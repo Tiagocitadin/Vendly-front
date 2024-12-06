@@ -67,7 +67,6 @@ methods: {
 
       if (users.length > 0) {
         const user = users[0];
-        // Salva o usuário no localStorage
         localStorage.setItem("usuarioLogado", JSON.stringify(user));
         this.$router.push("/"); 
         this.$emit("usuarioLogado", user); 
