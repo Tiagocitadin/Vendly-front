@@ -9,7 +9,7 @@
       >
       <div
         class="produto-imagem"
-        :style="{ backgroundImage: `url(${produto.imagem})` }"
+        :style="{ backgroundImage: `url(http://localhost:8000${produto.imagem})` }"
       ></div>
 
         <div>

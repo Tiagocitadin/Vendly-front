@@ -23,13 +23,13 @@
 
         <div class="form-group">
           <label for="quantidade">Quantidade em Estoque <span>*</span></label>
-          <input type="number" id="quantidade" v-model="produto.quantidade" placeholder="Quantidade" required />
+          <input type="number"  id="quantidade" v-model="produto.quantidade" placeholder="Quantidade" required />
           <small v-if="errors.quantidade" class="error">{{ errors.quantidade }}</small>
         </div>
 
         <div class="form-group">
           <label for="preco">Valor <span>*</span></label>
-          <input type="number" id="preco" v-model="produto.preco" placeholder="R$" required />
+          <input type="number" min="0" step=".01" id="preco" v-model="produto.preco" placeholder="R$" required />
           <small v-if="errors.preco" class="error">{{ errors.preco }}</small>
         </div>
 

@@ -4,8 +4,6 @@
     <div class="resumo-compra">
       <section class="dados-cliente">
         <h2>Dados do Cliente</h2>
-        <p><strong>Nome:</strong> </p>
-        <p><strong>Forma de Pagamento:</strong> </p>
       </section>
 
       <section class="itens-carrinho">
@@ -47,6 +45,7 @@ export default {
       dadosCliente: {
         nome: "",
         formaPagamento: "",
+
       },
       total: 0, // Valor total do pedido
     };
@@ -79,7 +78,7 @@ export default {
 <style scoped>
 .confirmar-compra {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 50px auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;

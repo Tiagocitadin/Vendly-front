@@ -6,7 +6,7 @@
         <div v-for="(produto, index) in produtosCarrinho" :key="index" class="item">
           <div class="remove" @click="removerItem(produto.id)">Remove item</div>
           <div class="photo">
-            <img :src="'http://localhost:8000/' + produto.imagem" alt="Produto" />
+            <img :src="'http://localhost:8000' + produto.imagem" alt="Produto" />
           </div>
           <div class="descricao">{{ produto.nome }}</div>
           <div class="preco">
