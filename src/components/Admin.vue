@@ -4,15 +4,28 @@
     <div v-if="!autenticado" class="login-form">
       <h1>Autenticação Administrativa</h1>
       <form @submit.prevent="validarUsuarioESenha">
-        <label>
-          Usuário:
+        <div class="input-group">
+          <label>Usuário:</label>
           <input v-model="usuario" type="text" placeholder="Digite seu usuário" required />
-        </label>
-        <label>
-          Senha:
-          <input v-model="senha" type="password" placeholder="Digite a senha" required />
-        </label>
-        <button type="submit">Entrar</button>
+        </div>
+        <div class="input-group">
+          <label>Senha:</label>
+          <div class="password-wrapper">
+            <input
+              v-model="senha"
+              :type="mostrarSenha ? 'text' : 'password'"
+              placeholder="Digite sua senha"
+              required
+            />
+            <i
+              :class="mostrarSenha ? 'fas fa-eye-slash' : 'fas fa-eye'"
+              @click="toggleMostrarSenha"
+              class="password-toggle"
+              title="Mostrar/Esconder senha"
+            ></i>
+          </div>
+        </div>
+        <button type="submit" class="btn-login">Entrar</button>
       </form>
     </div>
 
@@ -21,7 +34,6 @@
       <h1>Painel Administrativo</h1>
       <p v-if="adminLogado.tipoAdmin === 'superadmin'">Você é um Super Admin!</p>
       <p v-else>Você é um Admin Regular.</p>
-
       <table class="admin-table">
         <thead>
           <tr>
@@ -43,179 +55,178 @@
           </tr>
         </tbody>
       </table>
-
-      <div v-if="usuarioSelecionado" class="edit-form">
-        <h2>Editar Usuário</h2>
-        <form @submit.prevent="salvarEdicao">
-          <label>
-            Nome:
-            <input v-model="usuarioSelecionado.nome" />
-          </label>
-          <label>
-            Email:
-            <input v-model="usuarioSelecionado.email" />
-          </label>
-          <button type="submit">Salvar</button>
-          <button type="button" @click="cancelarEdicao">Cancelar</button>
-        </form>
-      </div>
     </div>
   </div>
 </template>
 
-  
-  <script>
+<script>
 import axios from "axios";
+import Cookies from "js-cookie"; // Importa a biblioteca js-cookie
 
 export default {
   data() {
     return {
-      usuario: "", // Usuário digitado
-      senha: "", // Senha digitada
-      autenticado: false, // Estado de autenticação
-      adminLogado: null, // Administrador logado
-      admins: [], // Lista de administradores cadastrados
-      users: [], // Lista de usuários
-      usuarioSelecionado: null, // Usuário em edição
+      usuario: "", // Campo para o nome de usuário
+      senha: "", // Campo para a senha
+      mostrarSenha: false, // Controle para exibir ou esconder senha
+      autenticado: false, // Controle de autenticação
+      adminLogado: null, // Informações do administrador logado
+      admins: [], // Lista de administradores carregados do db.json
     };
   },
+  created() {
+    // Verifica se o cookie de login existe e autentica automaticamente
+    const adminCookie = Cookies.get("adminLogado");
+    if (adminCookie) {
+      this.autenticado = true;
+      this.adminLogado = JSON.parse(adminCookie); // Recupera os dados do cookie
+    }
+  },
   methods: {
-    async carregarAdmins() {
+    async validarUsuarioESenha() {
       try {
         const response = await axios.get("http://localhost:8000/admins");
         this.admins = response.data;
-      } catch (error) {
-        console.error("Erro ao carregar administradores:", error);
-        alert("Não foi possível carregar a lista de administradores.");
-      }
-    },
-    validarUsuarioESenha() {
-      const admin = this.admins.find(
-        (admin) => admin.usuario === this.usuario && admin.senha === this.senha
-      );
 
-      if (admin) {
-        this.autenticado = true;
-        this.adminLogado = admin; // Armazena os dados do admin logado
-        alert(`Bem-vindo, ${admin.usuario}!`);
-        if (admin.tipoAdmin === "superadmin") {
-          this.$router.push("/superadmin-dashboard");
-        } else {
-          this.$router.push("/cadastroproduto");
-        }
-      } else {
-        alert("Usuário ou senha incorretos.");
-      }
-    },
-    async carregarUsuarios() {
-      try {
-        const response = await axios.get("http://localhost:8000/clientes");
-        this.users = response.data;
-      } catch (error) {
-        console.error("Erro ao carregar usuários:", error);
-        alert("Não foi possível carregar os usuários.");
-      }
-    },
-    editarUsuario(user) {
-      this.usuarioSelecionado = { ...user }; // Clona os dados do usuário selecionado
-    },
-    async excluirUsuario(userId) {
-      try {
-        await axios.delete(`http://localhost:8000/clientes/${userId}`);
-        this.users = this.users.filter((user) => user.id !== userId);
-        alert("Usuário excluído com sucesso!");
-      } catch (error) {
-        console.error("Erro ao excluir usuário:", error);
-        alert("Não foi possível excluir o usuário.");
-      }
-    },
-    async salvarEdicao() {
-      try {
-        const response = await axios.put(
-          `http://localhost:8000/clientes/${this.usuarioSelecionado.id}`,
-          this.usuarioSelecionado
+        const admin = this.admins.find(
+          (admin) => admin.usuario === this.usuario && admin.senha === this.senha
         );
-        const index = this.users.findIndex((user) => user.id === response.data.id);
-        this.$set(this.users, index, response.data);
-        alert("Usuário atualizado com sucesso!");
-        this.usuarioSelecionado = null;
+
+        if (admin) {
+          this.autenticado = true;
+          this.adminLogado = admin;
+          Cookies.set("adminLogado", JSON.stringify(admin), { expires: 3 }); 
+          this.$router.push("/cadastroproduto");
+        } else {
+          alert("Usuário ou senha incorretos!");
+        }
       } catch (error) {
-        console.error("Erro ao salvar edição:", error);
-        alert("Não foi possível salvar as alterações.");
+        console.error("Erro ao buscar administradores:", error);
+        alert("Erro ao realizar login. Tente novamente mais tarde.");
       }
     },
-    cancelarEdicao() {
-      this.usuarioSelecionado = null; // Limpa o formulário de edição
+    toggleMostrarSenha() {
+      this.mostrarSenha = !this.mostrarSenha; // Alterna entre mostrar e esconder a senha
     },
-  },
-  mounted() {
-    this.carregarAdmins(); // Carrega os administradores ao montar o componente
   },
 };
 </script>
 
-  
-  <style>
-  /* Estilos principais */
-  .admin-container {
-    max-width: 800px;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-    text-align: left;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
-  
-  h1 {
-    text-align: center;
-  }
-  
-  .login-form {
-    text-align: center;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 10px;
-  }
-  
-  input {
-    padding: 8px;
-    margin-top: 5px;
-    width: 100%;
-  }
-  
-  button {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  .admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-  }
-  
-  .admin-table th,
-  .admin-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .admin-table th {
-    background-color: #f4f4f4;
-  }
-  </style>
-  
+<style>
+/* Estilos originais mantidos */
+.admin-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #333333;
+  margin-bottom: 20px;
+}
+
+/* Formulário */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group {
+  width: 100%;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.input-group label {
+  font-weight: bold;
+  color: #555555;
+  margin-bottom: 5px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Campo de senha */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  padding-right: 40px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666666;
+}
+
+.password-toggle:hover {
+  color: #007bff;
+}
+
+/* Botão de login */
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-login:hover {
+  background-color: #0056b3;
+}
+
+.btn-login:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Tabela Administrativa */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f4f4f4;
+}
+</style>

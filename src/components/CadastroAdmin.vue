@@ -206,56 +206,81 @@ export default {
   max-width: 600px;
   margin: 50px auto;
   font-family: Arial, sans-serif;
-  text-align: left;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 10px;
   background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1,
 h2 {
   text-align: center;
   color: #333;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   margin-bottom: 20px;
 }
 
+/* Formulários */
 .admin-form,
 .edit-form {
   margin-bottom: 20px;
-  padding: 15px;
+  padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #f9f9f9;
 }
 
-.password-container {
-  display: flex;
-  align-items: center;
-  position: relative;
+.admin-form label,
+.edit-form label {
+  display: block;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
 }
 
+.admin-form input,
+.edit-form input,
+.admin-form select,
+.edit-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.admin-form input:focus,
+.edit-form input:focus,
+.admin-form select:focus,
+.edit-form select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Campo de senha com ícone */
 .password-container {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
 }
 
 .password-container input {
   flex: 1;
-  padding-right: 40px; /* Espaço para o botão de alternar senha */
+  padding-right: 40px;
 }
 
 .password-container .toggle-password {
   position: absolute;
+  top: 50%;
   right: 10px;
+  transform: translateY(-60%); 
   background: none;
   border: none;
-  cursor: pointer;
-  font-size: 1.2rem; /* Tamanho do ícone */
+  font-size: 1.2rem;
   color: #007bff;
+  cursor: pointer;
   transition: color 0.3s ease;
 }
 
@@ -263,45 +288,63 @@ h2 {
   color: #0056b3;
 }
 
-
+/* Botões */
 button {
-  margin-top: 10px;
-  padding: 10px 20px; /* Ajuste para mais espaçamento interno */
-  background-color: #007bff; /* Azul padrão */
-  color: white;
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: #ffffff;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 1rem; /* Tamanho consistente */
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-  background-color: #0056b3; /* Azul mais escuro no hover */
-  transform: scale(1.05); /* Leve aumento no hover */
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 button:active {
-  background-color: #003f7f; /* Azul ainda mais escuro no clique */
-  transform: scale(0.95); /* Leve redução ao clicar */
+  background-color: #003f7f;
+  transform: scale(0.95);
 }
 
 button.cancelar {
-  background-color: #dc3545; /* Vermelho para o botão Cancelar */
-  margin-left: 10px; /* Espaçamento entre Salvar e Cancelar */
+  background-color: #dc3545;
+  margin-left: 10px;
 }
 
 button.cancelar:hover {
-  background-color: #a71d2a; /* Vermelho mais escuro no hover */
-}
-
-.edit-form button {
-  display: inline-block; /* Os botões ficam alinhados na horizontal */
-  margin-right: 10px; /* Espaçamento entre os botões */
+  background-color: #a71d2a;
 }
 
 button.cancelar:active {
   transform: scale(0.95);
+}
+
+/* Tabela de administradores */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.admin-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  color: #555;
 }
 
 .admin-table td button {
@@ -331,12 +374,14 @@ button.cancelar:active {
   background-color: #a71d2a;
 }
 
-.admin-table td {
-  text-align: center;
-}
-
+/* Responsividade */
 @media (max-width: 768px) {
   .admin-container {
+    padding: 15px;
+  }
+
+  .admin-form,
+  .edit-form {
     padding: 10px;
   }
 
@@ -350,4 +395,5 @@ button.cancelar:active {
     padding: 8px;
   }
 }
+
 </style>

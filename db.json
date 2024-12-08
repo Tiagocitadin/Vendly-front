@@ -73,7 +73,14 @@
       "maisVendido": true
     }
   ],
-  "admins": [],
+  "admins": [
+    {
+      "id": "f01c",
+      "usuario": "tiago",
+      "senha": "123456",
+      "tipoAdmin": "admin"
+    }
+  ],
   "clientes": [
     {
       "id": "1a73",
@@ -91,7 +98,7 @@
         "numero": "1601",
         "complemento": "casa"
       },
-      "loginCount": 67,
+      "loginCount": 68,
       "acessos": [
         {
           "data": "03/12/2024",
@@ -112,6 +119,11 @@
           "data": "03/12/2024",
           "hora": "21:39:24",
           "ip": "189.112.39.185"
+        },
+        {
+          "data": "08/12/2024",
+          "hora": "20:01:07",
+          "ip": "131.255.206.111"
         }
       ]
     },

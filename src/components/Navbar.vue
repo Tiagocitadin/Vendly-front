@@ -130,7 +130,7 @@ export default {
 <style lang="scss">
 .login-bar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: right;
   align-items: center;
   background-color: white;
   color: black;
