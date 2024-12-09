@@ -1,47 +1,8 @@
 <template>
   <div>
-    <div class="login-bar">
-      <div class="user-info">
-        <span v-if="usuarioLogado">Olá, {{ usuarioLogado.nome }}</span>
-        <router-link v-else to="/login" class="login-nav">Login</router-link>
-
-        <img
-          v-if="usuarioLogado"
-          src="/assets/perfil.png"
-          alt="Perfil"
-          class="btn-profile"
-          @click="irParaPerfil"
-          title="Perfil"
-        />
-        <img
-          v-if="usuarioLogado"
-          src="/assets/acesso.png"
-          alt="Acesso"
-          class="btn-profile"
-          @click="irParaAcesso"
-          title="Acesso"
-        />
-        <button
-          v-if="usuarioLogado"
-          @click="logout"
-          class="logout-button"
-          title="Sair"
-        >sair</button>
-      </div>
-
-      <button
-        class="dark-mode-toggle"
-        :class="{ 'dark-mode': isDarkMode, 'light-mode': !isDarkMode }"
-        @click="$emit('toggle-dark-mode')"
-        :title="isDarkMode ? 'Modo Claro' : 'Modo Escuro'"
-      >
-        <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
-      </button>
-    </div>
-
     <div id="nav">
       <nav>
-        <ul>
+        <ul class="nav-links">
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/produto">Produtos</router-link></li>
           <li class="carrinho-link">
@@ -55,12 +16,38 @@
             </router-link>
           </li>
         </ul>
+
+        <div class="user-controls">
+          <span v-if="usuarioLogado" class="usuario-nome">Olá, {{ usuarioNome }}</span>
+          <router-link v-else to="/login" class="login-nav">Login</router-link>
+
+          <div class="user-buttons" v-if="usuarioLogado">
+            <img
+              src="/assets/perfil.png"
+              alt="Perfil"
+              class="btn-profile"
+              @click="irParaPerfil"
+              title="Perfil"
+            />
+            <img
+              src="/assets/acesso.png"
+              alt="Acesso"
+              class="btn-profile"
+              @click="irParaAcesso"
+              title="Acesso"
+            />
+            <button @click="logout" class="logout-button" title="Sair">Sair</button>
+          </div>
+        </div>
       </nav>
     </div>
   </div>
 </template>
 
 <script>
+import Cookies from "js-cookie";
+import axios from "axios";
+
 export default {
   props: {
     isDarkMode: {
@@ -70,8 +57,9 @@ export default {
   },
   data() {
     return {
-      produtos: [], // Produtos disponíveis
-      usuarioLogado: null, // Informações do usuário logado
+      produtos: [],
+      usuarioLogado: null,
+      usuarioNome: null,
     };
   },
   computed: {
@@ -80,24 +68,43 @@ export default {
     },
   },
   created() {
-    const usuario = localStorage.getItem("usuarioLogado");
-    if (usuario) {
-      this.usuarioLogado = JSON.parse(usuario);
+    const clienteCookie = Cookies.get("clienteToken");
+    const clienteNomeCookie = Cookies.get("clienteNome");
+
+    if (clienteCookie) {
+      this.usuarioLogado = { token: clienteCookie };
+    }
+    if (clienteNomeCookie) {
+      this.usuarioNome = clienteNomeCookie;
     }
 
-    // Recupera o estado do modo escuro do localStorage
     const savedTheme = localStorage.getItem("isDarkMode");
     if (savedTheme === "true") {
       this.enableDarkMode();
     }
   },
   methods: {
-    fetchProdutos() {
-      console.log("Fetching produtos...");
-    },
-    logout() {
-      localStorage.removeItem("usuarioLogado");
+    async logout() {
+      if (!this.usuarioLogado) return;
+
+      try {
+        await axios.post(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/api/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${this.usuarioLogado.token}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Erro ao fazer logout:", error);
+      }
+
+      Cookies.remove("clienteNome");
+      Cookies.remove("clienteToken");
       this.usuarioLogado = null;
+      this.usuarioNome = null;
       this.$router.push("/");
     },
     irParaPerfil() {
@@ -128,99 +135,13 @@ export default {
 </script>
 
 <style lang="scss">
-.login-bar {
-  display: flex;
-  justify-content: right;
-  align-items: center;
-  background-color: white;
-  color: black;
-  padding: 10px 20px;
-  height: 50px;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-info span {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.login-nav {
-  background: linear-gradient(to bottom, #4a90e2, #357abd);
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: Arial, sans-serif;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 25px;
-  padding: 10px 20px;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-decoration: none;
-}
-
-.login-nav:hover {
-  background: linear-gradient(to bottom, #357abd, #4a90e2);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-}
-
-.btn-profile {
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.btn-profile:hover {
-  transform: scale(1.2);
-  opacity: 0.8;
-}
-
-.logout-button {
-  background: linear-gradient(to bottom, #ff5c5c, #e53935);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: bold;
-  border: none;
-  border-radius: 15px;
-  padding: 5px 15px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.logout-button:hover {
-  background: linear-gradient(to bottom, #e53935, #ff5c5c);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.logout-button:active {
-  transform: scale(0.95);
-}
-
-.sair {
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.sair:hover {
-  transform: scale(1.1);
-}
-
 #nav {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: flex-start;
   background-color: #000000;
   color: #ffffff;
-  padding: 10px 0;
+  padding: 10px 20px;
   height: 60px;
 }
 
@@ -228,8 +149,8 @@ export default {
   display: flex;
   list-style: none;
   margin: 0;
-  padding: 0 20px;
-  gap: 50px;
+  padding: 0;
+  gap: 50px; /* Ajusta o espaço entre os links */
 }
 
 #nav nav ul li {
@@ -288,27 +209,76 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.dark-mode-toggle {
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
+.user-controls {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  right: 20px;
+  top: 10px;
+}
+
+.usuario-nome {
+  font-size: 16px;
+}
+
+.login-nav {
+  background: linear-gradient(to bottom, #4a90e2, #357abd);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+
+.login-nav:hover {
+  background: linear-gradient(to bottom, #357abd, #4a90e2);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.user-buttons {
+  display: flex;
+  gap: 15px;
   align-items: center;
-  margin-left: 10px;
-  transition: color 0.3s ease;
 }
 
-.dark-mode-toggle.dark-mode {
-  color: #ffd700;
-  background: white;
+.btn-profile {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.dark-mode-toggle.light-mode {
-  color: black;
-  background: white;
+.btn-profile:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
 }
 
-.dark-mode-toggle:hover {
-  transform: scale(1.1);
+.logout-button {
+  background: linear-gradient(to bottom, #ff5c5c, #e53935);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 15px;
+  padding: 5px 15px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button:hover {
+  background: linear-gradient(to bottom, #e53935, #ff5c5c);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.logout-button:active {
+  transform: scale(0.95);
 }
 </style>

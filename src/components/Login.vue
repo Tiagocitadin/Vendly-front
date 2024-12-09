@@ -37,49 +37,70 @@
 </template>
 
 <script>
-  import axios from "axios";
+import axios from "axios";
+import Cookies from "js-cookie"; // Importa a biblioteca js-cookie
+
 export default {
   name: "Login",
   data() {
     return {
       email: "",
       password: "",
+      autenticado: false,
+      clienteLogado: null,
     };
   },
-
-methods: {
-
-  async handleLogin() {
-    if (!this.email || !this.password) {
-      alert("Por favor, preencha todos os campos.");
-      return;
-    }
-
-    try {
-      // Realizar a requisição GET com Axios
-      const response = await axios.get("http://localhost:8000/clientes", {
-        params: {
-          email: this.email,
-          password: this.password,
-        },
-      });
-      const users = response.data;
-
-      if (users.length > 0) {
-        const user = users[0];
-        localStorage.setItem("usuarioLogado", JSON.stringify(user));
-        this.$router.push("/"); 
-        this.$emit("usuarioLogado", user); 
-        window.location.href = "/";
-      } else {
-        alert("Email ou senha inválidos.");
-      }
-    } catch (error) {
-      console.error("Erro ao realizar login:", error);
-      alert("Erro ao conectar com o servidor. Tente novamente mais tarde.");
+  created() {
+    // Verifica se o cookie de login existe e autentica automaticamente
+    const clienteToken = Cookies.get("clienteToken");
+    if (clienteToken) {
+      // Se o token estiver presente, redireciona para a página principal
+      this.$router.push("/");
     }
   },
+  methods: {
+    async handleLogin() {
+  if (!this.email || !this.password) {
+    alert("Por favor, preencha todos os campos.");
+    return;
+  }
+
+  try {
+    // Requisição ao endpoint para autenticar o cliente
+    const response = await axios.post(
+      `${import.meta.env.VITE_APP_API_BASE_URL}/api/clientes/login`,
+      {
+        email: this.email,
+        senha: this.password,
+      },
+      {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const token = response.data.token;
+    const cliente = response.data.user; // Acessa o usuário da resposta
+
+    if (token) {
+      // Cliente autenticado com sucesso
+      this.autenticado = true;
+      this.clienteLogado = cliente; // Personalize conforme necessário
+      Cookies.set("clienteToken", token, { expires: 3, secure: true });
+      Cookies.set("clienteNome", cliente.nome, { expires: 3, secure: true }); // Salvando o nome corretamente
+
+      this.$router.push("/"); // Redireciona para a página inicial
+    } else {
+      alert("Falha na autenticação. Tente novamente!");
+    }
+  } catch (error) {
+    console.error("Erro ao realizar login:", error);
+    alert("Email ou senha inválidos.");
+  }
 },
+  },
 };
 </script>
 
