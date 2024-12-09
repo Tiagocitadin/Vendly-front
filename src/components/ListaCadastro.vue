@@ -1,79 +1,103 @@
 <template>
-    <div class="produto-container">
-      <div class="header">
-        <h4>Vendly - Relatório de Produtos</h4>
-        <button @click="irParaCadastro" class="add-button">Cadastrar Novo Produto</button>
-      </div>
-  
-      <table class="report-table" v-if="produtos.length">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Título</th>
-            <th>Descrição</th>
-            <th>Quantidade</th>
-            <th>Preço (R$)</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="produto in produtos" :key="produto.id">
-            <td>{{ produto.id }}</td>
-            <td>{{ produto.nome }}</td>
-            <td>{{ produto.descricao }}</td>
-            <td>{{ produto.quantidade }}</td>
-            <td>{{ produto.preco }}</td>
-            <td class="action-buttons">
-              <button @click="editarProduto(produto)" class="edit-button">Editar</button>
-              <button @click="excluir(produto.id)" class="delete-button">Excluir</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-  
-      <p v-if="!produtos.length" class="no-products">Nenhum produto cadastrado.</p>
+  <div class="produto-container">
+    <div class="header">
+      <h4>Vendly - Relatório de Produtos</h4>
+      <button @click="irParaCadastro" class="add-button">Cadastrar Novo Produto</button>
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        produtos: []
-      };
+
+    <table class="report-table" v-if="produtos.length">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Título</th>
+          <th>Descrição</th>
+          <th>Quantidade</th>
+          <th>Preço (R$)</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="produto in produtos" :key="produto.id">
+          <td>{{ produto.id }}</td>
+          <td>{{ produto.nome }}</td>
+          <td>{{ produto.descricao }}</td>
+          <td>{{ produto.quantidade }}</td>
+          <td>{{ produto.preco }}</td>
+          <td class="action-buttons">
+            <button @click="editarProduto(produto)" class="edit-button">Editar</button>
+            <button @click="excluir(produto.id)" class="delete-button">Excluir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p v-if="!produtos.length" class="no-products">Nenhum produto cadastrado.</p>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+import Cookies from 'js-cookie';  // Importando o js-cookie
+
+export default {
+  data() {
+    return {
+      produtos: []
+    };
+  },
+  methods: {
+    irParaCadastro() {
+      this.$router.push({ path: '/cadastroproduto' });
     },
-    methods: {
-      irParaCadastro() {
-        this.$router.push({ path: '/cadastroproduto' });
-      },
-      async buscarProdutos() {
-        try {
-          const response = await axios.get('http://localhost:8000/produtos');
-          this.produtos = response.data;
-        } catch (error) {
-          console.error("Erro ao buscar produtos:", error);
+    async buscarProdutos() {
+      try {
+        // Verifica se o usuário está autenticado
+        if (!this.tokenAutenticacao()) {
+          this.$router.push('/login');
+          return;
         }
-      },
-      editarProduto(produto) {
-        this.$router.push({ path: '/cadastroproduto', query: { id: produto.id } });
-      },
-      async excluir(id) {
-        try {
-          await axios.delete(`http://localhost:8000/produtos/${id}`);
-          this.produtos = this.produtos.filter(produto => produto.id !== id);
-        } catch (error) {
-          console.error("Erro ao excluir produto:", error);
-        }
+
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/api/produtos`, {
+          headers: {
+            Authorization: `Bearer ${this.tokenAutenticacao()}`
+          }
+        });
+        this.produtos = response.data;
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
       }
     },
-    // Busca a lista de produtos toda vez que o componente é montado
-    created() {
-      this.buscarProdutos();
+    editarProduto(produto) {
+      this.$router.push({ path: '/cadastroproduto', query: { id: produto.id } });
+    },
+    async excluir(id) {
+      try {
+        // Verifica se o usuário está autenticado
+        if (!this.tokenAutenticacao()) {
+          this.$router.push('/admin');
+          return;
+        }
+
+        await axios.delete(`${import.meta.env.VITE_APP_API_BASE_URL}/api/produtos/${id}`, {
+          headers: {
+            Authorization: `Bearer ${this.tokenAutenticacao()}`
+          }
+        });
+        this.produtos = this.produtos.filter(produto => produto.id !== id);
+      } catch (error) {
+        console.error("Erro ao excluir produto:", error);
+      }
+    },
+    tokenAutenticacao() {
+      // Recupera o token de autenticação armazenado usando js-cookie com o nome 'adminToken'
+      return Cookies.get('adminToken');  // Alterado para usar 'adminToken'
     }
-  };
-  </script>
+  },
+  created() {
+    this.buscarProdutos();
+  }
+};
+</script>
   
  <style scoped>
  

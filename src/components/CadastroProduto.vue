@@ -1,12 +1,9 @@
 <template>
-
   <div class="cadastro-container">
-    <!-- Cabeçalho -->
     <div class="header">
-      <h4>Vendly - Cadastro Produto</h4>
+      <h4>{{ isEdit ? 'Editar Produto' : 'Cadastro Produto' }}</h4>
     </div>
 
-    <!-- Formulário de Cadastro de Produto -->
     <div class="produto-registration">
       <form @submit.prevent="inserir">
         <div class="form-group">
@@ -23,7 +20,7 @@
 
         <div class="form-group">
           <label for="quantidade">Quantidade em Estoque <span>*</span></label>
-          <input type="number"  id="quantidade" v-model="produto.quantidade" placeholder="Quantidade" required />
+          <input type="number" id="quantidade" v-model="produto.quantidade" placeholder="Quantidade" required />
           <small v-if="errors.quantidade" class="error">{{ errors.quantidade }}</small>
         </div>
 
@@ -43,10 +40,10 @@
           </div>
         </div>
 
-        <button type="submit" class="submit-button_cadastrar">Cadastrar</button>
-        <button type="button" class="submit-button_limpar" @click="clearForm">Limpar Formulário</button>
-
-
+        <div class="form-group-buttons">
+          <button type="submit" class="submit-button_cadastrar">{{ isEdit ? 'Salvar Alterações' : 'Cadastrar' }}</button>
+          <button type="button" class="submit-button_limpar" @click="clearForm">Limpar Formulário</button>
+        </div>
       </form>
     </div>
   </div>
@@ -54,6 +51,7 @@
 
 <script>
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default {
   data() {
@@ -63,46 +61,93 @@ export default {
         descricao: "",
         quantidade: "",
         preco: "",
-        imagem: null, // Para armazenar o arquivo de imagem
-        imagemPreview: null, // Para pré-visualização da imagem
+        imagem: null,
+        imagemPreview: null,
       },
-      errors: {}, // Para mensagens de erro
+      errors: {},
+      isEdit: false,
     };
   },
 
-  methods: {
-    async inserir() {
-      this.errors = {}; // Limpa os erros antes da validação
+  mounted() {
+    const token = Cookies.get("adminToken");
+    if (!token) {
+      this.$router.push("/admin");
+    }
 
-      // Validação
+    const queryParams = new URLSearchParams(window.location.hash.slice(2).split('?')[1]);
+    const id = queryParams.get('id');
+    
+    if (id) {
+      this.isEdit = true;
+      this.fetchProduct(id);
+    }
+  },
+
+  methods: {
+    async fetchProduct(id) {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/api/produtos/${id}`);
+        this.produto = response.data;
+
+        if (this.produto.imagem) {
+          this.produto.imagemPreview = `${import.meta.env.VITE_APP_API_BASE_URL}${this.produto.imagem}`;
+        }
+      } catch (error) {
+        console.error("Erro ao buscar o produto:", error);
+        alert("Erro ao buscar o produto.");
+      }
+    },
+
+    async inserir() {
+      this.errors = {};
       if (!this.produto.nome) this.errors.nome = "O título do produto é obrigatório.";
-      if (!this.produto.descricao) this.errors.descricao = "A descrição do produto é obrigatória.";       
-      if (!this.produto.quantidade) this.errors.quantidade = "A quantidade em estoque é obrigatória.";       
+      if (!this.produto.descricao) this.errors.descricao = "A descrição do produto é obrigatória.";
+      if (!this.produto.quantidade) this.errors.quantidade = "A quantidade em estoque é obrigatória.";
       if (!this.produto.preco) this.errors.preco = "O valor do produto é obrigatório.";
 
-      if (Object.keys(this.errors).length > 0) return; // Interrompe se houver erros
+      if (Object.keys(this.errors).length > 0) return;
+
       try {
-        // Criar os dados para envio
         const formData = new FormData();
         formData.append("nome", this.produto.nome);
         formData.append("descricao", this.produto.descricao);
         formData.append("quantidade", this.produto.quantidade);
         formData.append("preco", this.produto.preco);
 
-        // Adicionar imagem, se houver
         if (this.produto.imagem) {
           formData.append("imagem", this.produto.imagem);
         }
-        await axios.post("http://localhost:8000/produtos", formData);
-        alert(`${this.produto.nome} cadastrado com sucesso!`);
+
+        const token = Cookies.get("adminToken");
+
+        let url = `${import.meta.env.VITE_APP_API_BASE_URL}/api/produtos`;
+        let method = 'post'; // Default method for creating
+        if (this.isEdit) {
+          url = `${url}/${this.produto.id}`;
+          method = 'put'; // Update method for editing
+        }
+
+
+        await axios({
+          method,
+          url,
+          data: formData,
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        alert(`${this.produto.nome} ${this.isEdit ? 'alterado' : 'cadastrado'} com sucesso!`);
         this.clearForm();
+        this.$router.push("/listarproduto");
       } catch (error) {
-        console.error("Erro ao cadastrar o produto:", error);
-        alert("Erro ao cadastrar o produto. Verifique o console para mais detalhes.");
+        console.error("Erro ao cadastrar ou editar o produto:", error);
+        alert("Erro ao cadastrar ou editar o produto.");
       }
     },
 
-    // Limpa os campos do formulário
     clearForm() {
       this.produto = {
         nome: "",
@@ -112,15 +157,13 @@ export default {
         imagem: null,
         imagemPreview: null,
       };
+      this.isEdit = false;
     },
 
-    // Manipula o upload de imagem
     onImageSelected(event) {
       const file = event.target.files[0];
       if (file) {
         this.produto.imagem = file;
-
-        // Cria uma pré-visualização da imagem
         const reader = new FileReader();
         reader.onload = (e) => {
           this.produto.imagemPreview = e.target.result;

@@ -76,33 +76,46 @@ export default {
   },
   created() {
     // Verifica se o cookie de login existe e autentica automaticamente
-    const adminCookie = Cookies.get("adminLogado");
-    if (adminCookie) {
-      this.autenticado = true;
-      this.adminLogado = JSON.parse(adminCookie); // Recupera os dados do cookie
+    const adminToken = Cookies.get("adminToken");
+    if (adminToken) {
+      // Se o token estiver presente, redireciona para /listarproduto
+      this.$router.push("/listarproduto");
     }
   },
   methods: {
     async validarUsuarioESenha() {
       try {
-        const response = await axios.get("http://localhost:8000/admins");
-        this.admins = response.data;
-
-        const admin = this.admins.find(
-          (admin) => admin.usuario === this.usuario && admin.senha === this.senha
+        // Requisição ao endpoint para autenticar o administrador
+        const response = await axios.post(
+          `${import.meta.env.VITE_APP_API_BASE_URL}/api/admins/login`,
+          {
+            email: this.usuario,
+            senha: this.senha,
+          },
+          {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          }
         );
 
-        if (admin) {
+        // Captura o token da resposta
+        const token = response.data.token;
+
+        if (token) {
+          // Usuário autenticado com sucesso
           this.autenticado = true;
-          this.adminLogado = admin;
-          Cookies.set("adminLogado", JSON.stringify(admin), { expires: 3 }); 
-          this.$router.push("/cadastroproduto");
+          this.adminLogado = { usuario: this.usuario }; // Personalize conforme necessário
+          Cookies.set("adminToken", token, { expires: 3, secure: true });
+
+          this.$router.push("/listarproduto"); // Redireciona para a página de listagem de produtos
         } else {
-          alert("Usuário ou senha incorretos!");
+          alert("Falha na autenticação. Tente novamente!");
         }
       } catch (error) {
-        console.error("Erro ao buscar administradores:", error);
-        alert("Erro ao realizar login. Tente novamente mais tarde.");
+        console.error("Erro ao realizar login:", error);
+        alert("Usuário ou senha incorretos!");
       }
     },
     toggleMostrarSenha() {

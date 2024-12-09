@@ -28,10 +28,12 @@ export default createStore({
   },
 
   actions: {
-    // Carrega os produtos usando a API local na porta 8000
+    // Carrega os produtos usando a API base do arquivo .env
     carregarProdutos({ commit }) {
+      const apiUrl = `${import.meta.env.VITE_APP_API_BASE_URL}/api/produtos`;
+
       axios
-        .get('http://localhost:8000/produtos')  // Utilize http:// para uma API local
+        .get(apiUrl)
         .then(response => {
           commit('carregarProdutos', response.data);
         })
