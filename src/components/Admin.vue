@@ -5,8 +5,8 @@
       <h1>Autenticação Administrativa</h1>
       <form @submit.prevent="validarUsuarioESenha">
         <div class="input-group">
-          <label>Usuário:</label>
-          <input v-model="usuario" type="text" placeholder="Digite seu usuário" required />
+          <label>Email:</label>
+          <input v-model="usuario" type="text" placeholder="Digite seu email" required />
         </div>
         <div class="input-group">
           <label>Senha:</label>

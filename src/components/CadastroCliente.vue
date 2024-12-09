@@ -201,31 +201,62 @@ export default {
       }
     },
     async finalizarCadastro() {
-      try {
-        await axios.post("http://localhost:8000/clientes", this.cliente);
-        this.mensagemSucesso = true;
-        setTimeout(() => (this.mensagemSucesso = false), 5000); // Oculta a mensagem após 5 segundos
-        this.cliente = {
-          nome: "",
-          email: "",
-          senha: "",
-          cpf: "",
-          telefone: "",
-          endereco: {
-            cep: "",
-            rua: "",
-            bairro: "",
-            cidade: "",
-            estado: "",
-            numero: "",
+    try {
+      const cliente = {
+        nome: this.cliente.nome,
+        email: this.cliente.email,
+        senha: this.cliente.senha,
+        cpf: this.cliente.cpf,
+        telefone: this.cliente.telefone,
+        endereco: {
+          cep: this.cliente.endereco.cep,
+          rua: this.cliente.endereco.rua,
+          bairro: this.cliente.endereco.bairro,
+          cidade: this.cliente.endereco.cidade,
+          estado: this.cliente.endereco.estado,
+          numero: this.cliente.endereco.numero,
+          complemento: this.cliente.endereco.complemento,
+        },
+      };
+
+      await axios.post(
+        `${import.meta.env.VITE_APP_API_BASE_URL}/api/clientes`,
+        JSON.stringify(cliente),
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
           },
-        };
-        this.etapa = 1;
-      } catch (error) {
-        console.error("Erro ao cadastrar:", error);
-        alert("Erro ao cadastrar cliente");
-      }
-    },
+        }
+      );
+
+      this.mensagemSucesso = true;
+      setTimeout(() => {
+        this.$router.push({ path: "/login" }); // Redireciona para a página de login
+      }, 3000); // Redireciona após 3 segundos
+
+      this.cliente = {
+        nome: "",
+        email: "",
+        senha: "",
+        cpf: "",
+        telefone: "",
+        endereco: {
+          cep: "",
+          rua: "",
+          bairro: "",
+          cidade: "",
+          estado: "",
+          numero: "",
+          complemento: "",
+        },
+      };
+      this.etapa = 1;
+    } catch (error) {
+      console.error("Erro ao cadastrar:", error);
+      alert("Erro ao cadastrar cliente");
+    }
+  },
     formataCpf(cpf) {
       return cpf
         .replace(/\D/g, "")
@@ -261,6 +292,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .cadastro-container {
   max-width: 400px; /* Define uma largura máxima menor */
@@ -343,12 +375,12 @@ button {
 }
 
 .submit-button {
-  background-color: #007bff;
+  background-color: #5c6bc0;
   margin-left: 5px;
 }
 
 .edit-button {
-  background-color: #3498db;
+  background-color: #5c6bc0;
   margin-left: 5px;
 }
 
@@ -363,7 +395,7 @@ button {
 }
 
 button:hover {
-  opacity: 0.8;
+  background-color: #3b4cb8;
 }
 
 .success-message {
@@ -422,7 +454,7 @@ button:hover {
 }
 
 .toggle-password:hover {
-  color: #007bff;
+  color: #3b4cb8;
 }
 
 .toggle-password i {

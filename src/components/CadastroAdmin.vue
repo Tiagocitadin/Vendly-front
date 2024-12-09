@@ -3,8 +3,12 @@
     <h1>Cadastro de Administradores</h1>
     <form @submit.prevent="adicionarAdmin" class="admin-form">
       <label>
-        Usuário:
-        <input v-model="novoAdmin.usuario" type="text" required placeholder="Digite o nome de usuário" />
+        Nome:
+        <input v-model="novoAdmin.nome" type="text" required placeholder="Digite o nome" />
+      </label>
+      <label>
+        Email:
+        <input v-model="novoAdmin.email" type="email" required placeholder="Digite o email" />
       </label>
       <label>
         Senha:
@@ -24,13 +28,6 @@
           </button>
         </div>
       </label>
-      <label>
-        Tipo de Admin:
-        <select v-model="novoAdmin.tipoAdmin" required>
-          <option value="superadmin">Super Admin</option>
-          <option value="admin">Admin</option>
-        </select>
-      </label>
       <button type="submit">Cadastrar</button>
     </form>
 
@@ -39,16 +36,16 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Usuário</th>
-          <th>Tipo</th>
+          <th>Nome</th>
+          <th>Email</th>
           <th>Ações</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="admin in admins" :key="admin.id">
           <td>{{ admin.id }}</td>
-          <td>{{ admin.usuario }}</td>
-          <td>{{ admin.tipoAdmin }}</td>
+          <td>{{ admin.nome }}</td>
+          <td>{{ admin.email }}</td>
           <td>
             <button @click="editarAdmin(admin)">Editar</button>
             <button @click="excluirAdmin(admin.id)">Excluir</button>
@@ -63,8 +60,12 @@
       <h2>Editar Administrador</h2>
       <form @submit.prevent="salvarEdicao">
         <label>
-          Usuário:
-          <input v-model="adminSelecionado.usuario" type="text" required />
+          Nome:
+          <input v-model="adminSelecionado.nome" type="text" required />
+        </label>
+        <label>
+          Email:
+          <input v-model="adminSelecionado.email" type="email" required />
         </label>
         <label>
           Senha:
@@ -72,6 +73,7 @@
             <input
               v-model="adminSelecionado.senha"
               :type="senhaVisivelSelecionado ? 'text' : 'password'"
+              minlength="6"
               required
             />
             <button
@@ -83,13 +85,6 @@
             </button>
           </div>
         </label>
-        <label>
-          Tipo de Admin:
-          <select v-model="adminSelecionado.tipoAdmin" required>
-            <option value="superadmin">Super Admin</option>
-            <option value="admin">Admin</option>
-          </select>
-        </label>
         <button type="submit">Salvar</button>
         <button type="button" @click="cancelarEdicao">Cancelar</button>
       </form>
@@ -97,29 +92,40 @@
   </div>
 </template>
 
-
-
 <script>
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default {
   data() {
     return {
       novoAdmin: {
-        usuario: "",
+        nome: "",
+        email: "",
         senha: "",
-        tipoAdmin: "admin", // Valor padrão
       },
-      senhaVisivelNovo: false, // Controle da visibilidade da senha no formulário de cadastro
-      senhaVisivelSelecionado: false, // Controle da visibilidade da senha no formulário de edição
-      admins: [], // Lista de administradores cadastrados
-      adminSelecionado: null, // Administrador em edição
+      senhaVisivelNovo: false,
+      senhaVisivelSelecionado: false,
+      admins: [],
+      adminSelecionado: null,
     };
   },
   methods: {
+    verificarAutenticacao() {
+      const adminToken = Cookies.get("adminToken");
+      if (!adminToken) {
+        this.$router.push("/admin");
+      }
+    },
+    configurarAxios() {
+      const adminToken = Cookies.get("adminToken");
+      axios.defaults.baseURL = `${import.meta.env.VITE_APP_API_BASE_URL}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${adminToken}`;
+      axios.defaults.headers.common["Content-Type"] = "application/json";
+    },
     async carregarAdmins() {
       try {
-        const response = await axios.get("http://localhost:8000/admins");
+        const response = await axios.get("/api/admins");
         this.admins = response.data;
       } catch (error) {
         console.error("Erro ao carregar administradores:", error);
@@ -128,17 +134,17 @@ export default {
     },
     async adicionarAdmin() {
       try {
-        const response = await axios.post("http://localhost:8000/admins", {
-          usuario: this.novoAdmin.usuario,
+        const response = await axios.post("/api/admins", {
+          nome: this.novoAdmin.nome,
+          email: this.novoAdmin.email,
           senha: this.novoAdmin.senha,
-          tipoAdmin: this.novoAdmin.tipoAdmin,
         });
 
         this.admins.push(response.data);
 
-        this.novoAdmin.usuario = "";
+        this.novoAdmin.nome = "";
+        this.novoAdmin.email = "";
         this.novoAdmin.senha = "";
-        this.novoAdmin.tipoAdmin = "admin"; // Reseta o tipo para o valor padrão
         this.senhaVisivelNovo = false;
 
         alert("Administrador cadastrado com sucesso!");
@@ -148,45 +154,37 @@ export default {
       }
     },
     editarAdmin(admin) {
-      this.adminSelecionado = { ...admin }; // Clona os dados do administrador selecionado
-      this.senhaVisivelSelecionado = false; // Reseta a visibilidade da senha
+      this.adminSelecionado = { ...admin };
+      this.senhaVisivelSelecionado = false;
     },
     async salvarEdicao() {
-  try {
-    // Verifique o ID do administrador selecionado
-    const adminId = this.adminSelecionado.id;
+      try {
+        const adminId = this.adminSelecionado.id;
 
-    // Faça a requisição PUT para atualizar o administrador na API
-    const response = await axios.put(
-      `http://localhost:8000/admins/${adminId}`, // Certifique-se de que a rota está correta
-      {
-        usuario: this.adminSelecionado.usuario,
-        senha: this.adminSelecionado.senha,
-        tipoAdmin: this.adminSelecionado.tipoAdmin,
+        const response = await axios.put(`/api/admins/${adminId}`, {
+          nome: this.adminSelecionado.nome,
+          email: this.adminSelecionado.email,
+          senha: this.adminSelecionado.senha,
+        });
+
+        const index = this.admins.findIndex((admin) => admin.id === adminId);
+        if (index !== -1) {
+          this.$set(this.admins, index, response.data);
+        }
+
+        alert("Administrador atualizado com sucesso!");
+        this.adminSelecionado = null;
+      } catch (error) {
+        console.error("Erro ao salvar edição:", error);
+        alert("Não foi possível salvar as alterações.");
       }
-    );
-
-    // Atualize o administrador na lista local
-    const index = this.admins.findIndex((admin) => admin.id === adminId);
-    if (index !== -1) {
-      this.$set(this.admins, index, response.data);
-    }
-
-    // Mensagem de sucesso
-    alert("Administrador atualizado com sucesso!");
-    this.adminSelecionado = null; // Limpa o formulário de edição
-  } catch (error) {
-    console.error("Erro ao salvar edição:", error);
-    alert("Não foi possível salvar as alterações.");
-  }
-},
-
+    },
     cancelarEdicao() {
-      this.adminSelecionado = null; // Cancela a edição
+      this.adminSelecionado = null;
     },
     async excluirAdmin(adminId) {
       try {
-        await axios.delete(`http://localhost:8000/admins/${adminId}`);
+        await axios.delete(`/api/admins/${adminId}`);
         this.admins = this.admins.filter((admin) => admin.id !== adminId);
         alert("Administrador excluído com sucesso!");
       } catch (error) {
@@ -196,6 +194,8 @@ export default {
     },
   },
   mounted() {
+    this.verificarAutenticacao();
+    this.configurarAxios();
     this.carregarAdmins();
   },
 };
