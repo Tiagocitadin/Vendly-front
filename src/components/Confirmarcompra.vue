@@ -60,9 +60,8 @@ export default {
         0
       ).toFixed(2);
     },
-    confirmarCompra() {
-      alert("Compra confirmada! Obrigado pela preferência.");
-      this.$router.push("/"); // Redireciona para a página inicial
+    confirmarCompra() {    
+      this.$router.push("/feedback");
     },
     cancelarCompra() {
       alert("Compra cancelada.");

@@ -98,7 +98,7 @@ export default {
     logout() {
       localStorage.removeItem("usuarioLogado");
       this.usuarioLogado = null;
-      this.$router.push("/feedback");
+      this.$router.push("/");
     },
     irParaPerfil() {
       this.$router.push("/perfil");
